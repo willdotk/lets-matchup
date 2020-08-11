@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Badminton Team Match</title>
+    <!-- Bulma Version 0.8.2-->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+
+  <body>
+    <!-- START NAV -->
+    <nav class="navbar is-white">
+      <div class="container">
+        <div class="navbar-brand">
+          <p class="navbar-item brand-text">
+            CHCH Badminton (make editable)
+          </p>
+        </div>
+      </div>
+    </nav>
+    <!-- END NAV -->
+    <div class="container">
+      <div class="columns">
+        <div class="column is-3">
+          <aside class="menu">
+            <!-- Todo list type -->
+            <div id="addMemberModal" class="modal">
+              <div class="modal-background has-background-info-light"></div>
+              <div class="modal-content">
+                <div class="field">
+                  <div class="field-label is-normal">
+                    <label class="label has-text-grey-light">Name</label>
+                  </div>
+                  <div class="field-body">
+                    <div class="field">
+                      <p class="control">
+                        <input
+                          id="nameInput"
+                          class="input"
+                          type="text"
+                          placeholder="New Member Name"
+                        />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="field-label is-normal">
+                    <label class="label has-text-grey-light"
+                      >Play Level (1 to 10)</label
+                    >
+                  </div>
+                  <div class="field-body">
+                    <div class="field">
+                      <p class="control">
+                        <input
+                          id="levelInput"
+                          class="input"
+                          type="text"
+                          placeholder="Play level"
+                        />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <input
+                  class="button has-text-grey-light"
+                  type="submit"
+                  value="Add"
+                  onclick="addBtn()"
+                />
+              </div>
+              <button
+                class="modal-close is-large has-background-grey-lighter"
+                aria-label="close"
+                onclick="deactiveModal()"
+              ></button>
+            </div>
+            <div class="menu-label">
+              <div class="level">
+                <div class="level-left">
+                  <div class="level-item">
+                    Member
+                  </div>
+                </div>
+                <div class="level-right" onclick="activeModal()">
+                  <div
+                    class="level-item icon is-small is-right"
+                    style="cursor: pointer;"
+                  >
+                    <img src="img/plus.svg" alt="add member" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <ul id="members" class="menu-list is-capitalized"></ul>
+          </aside>
+        </div>
+        <div class="column is-9">
+          <section class="hero is-info">
+            <div class="hero-body">
+              <div class="container">
+                <h1 class="title">
+                  Hello Team.
+                </h1>
+                <div id="playerOnBench" class="grid"></div>
+              </div>
+            </div>
+          </section>
+          <section class="tile is-ancestor has-text-centered">
+            <div class="tile is-parent is-vertical">
+              <article class="tile is-child box">
+                <p id="playerNumber" class="title">0</p>
+                <p class="subtitle">Players</p>
+              </article>
+
+              <article class="tile is-child box">
+                <p id="teamNumber" class="title">0</p>
+                <p class="subtitle">Teams</p>
+              </article>
+            </div>
+            <div class="tile is-parent">
+              <article id="teamList" class="tile is-child box">
+                <p class="title">Team List</p>
+              </article>
+            </div>
+          </section>
+          <br />
+          <section class="tile is-ancestor has-text-centered">
+            <div class="tile is-parent has-vcentered">
+              <article class="tile is-child">
+                <p class="title">Play Courts</p>
+              </article>
+              <article class="tile is-child">
+                <div class="columns has-vcentered">
+                  <div class="column is-three-fifths">
+                    <p class="subtitle">No. of Courts</p>
+                    <p id="courtNumber" class="title">1</p>
+                  </div>
+                  <div class="column">
+                    <div class="grid-arrow">
+                      <span>
+                        <img
+                          id="upArrow"
+                          class="button"
+                          src="img/arrow-circle-up.svg"
+                          alt="up arrow"
+                          onclick="upArrow()"
+                        />
+                      </span>
+                      <span><br /></span>
+                      <span>
+                        <img
+                          id="downArrow"
+                          class="button"
+                          src="img/arrow-circle-down.svg"
+                          alt="down arrow"
+                          onclick="downArrow()"
+                        />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </article>
+              <article class="tile is-child">
+                <button class="button is-danger is-medium">Arrange team</button>
+              </article>
+            </div>
+          </section>
+
+          <div class="columns">
+            <div class="column">
+              <section class="info-tiles">
+                <div class="tile is-ancestor has-text-centered">
+                  <div id="courtTile" class="tile is-parent">
+                    <article class="tile is-child box">
+                      <p class="subtitle">Member 1 / Member 2</p>
+                      <p class="subtitle is-size-6">VS</p>
+                      <p class="subtitle">Member 3 / Member 4</p>
+                    </article>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="js/main.js"></script>
+  </body>
+</html>

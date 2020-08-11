@@ -1,0 +1,92 @@
+.field-label {
+  text-align: left;
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 3rem;
+  height: 1.7rem;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: '';
+  height: 1.3rem;
+  width: 1.3rem;
+  left: 0.2rem;
+  bottom: 0.2rem;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #2196f3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(1.3rem);
+  -ms-transform: translateX(1.3rem);
+  transform: translateX(1.3rem);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 1.7rem;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+.grid > p {
+  margin: 0.5rem;
+  padding: 0;
+}
+
+.grid-arrow {
+  display: grid;
+  grid-template-rows: 1fr 0.5fr 1fr;
+}
+
+.tile.is-parent.has-vcentered {
+  -webkit-box-align: center;
+     -ms-flex-align: center;
+        align-items: center;
+}
+.columns.has-vcentered {
+  -webkit-box-align: center;
+     -ms-flex-align: center;
+        align-items: center;
+}
