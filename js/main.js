@@ -46,48 +46,6 @@ function memberToList(name) {
   addListElement.appendChild(addCardElement);
   members.appendChild(addListElement);
 }
-/* Alternative option
-function memberToList(name) {
-  let addListElement = document.createElement('li'),
-    addLevelElement = document.createElement('div'),
-    deleteButtonImg = addIcon(
-      'img/user-minus-solid.svg',
-      'width:3rem; cursor:pointer'
-    ),
-    switchBtn = switchButton(name),
-    memberName = document.createTextNode(name),
-    leftLevel = document.createElement('div'),
-    rightLevel = document.createElement('div'),
-    nameLevelItem = document.createElement('div'),
-    namePElement = document.createElement('p'),
-    delBtnItem = document.createElement('div'),
-    switchBtnItem = document.createElement('div');
-
-  addLevelElement.classList = 'level';
-  leftLevel.classList = 'level-left';
-  rightLevel.classList = 'level-right';
-  nameLevelItem.classList = 'level-item';
-  nameLevelItem.style = 'font-size:1.3rem';
-  namePElement.appendChild(memberName);
-  switchBtnItem.classList = 'level-item';
-  switchBtnItem.appendChild(switchBtn);
-  delBtnItem.classList = 'level-item';
-  deleteButtonImg.addEventListener('click', deleteMember);
-  delBtnItem.appendChild(deleteButtonImg);
-
-  nameLevelItem.appendChild(namePElement);
-  leftLevel.appendChild(nameLevelItem);
-  rightLevel.appendChild(switchBtnItem);
-  rightLevel.appendChild(delBtnItem);
-
-  addLevelElement.appendChild(leftLevel);
-  addLevelElement.appendChild(rightLevel);
-  addListElement.id = name;
-  addListElement.classList = 'box';
-  addListElement.appendChild(addLevelElement);
-  members.appendChild(addListElement);
-}
-*/
 
 function addIcon(src, style) {
   let spanElement = document.createElement('span'),
@@ -257,24 +215,6 @@ function shuffle(array) {
   return array;
 }
 
-/* not used
-function averageCalcResult(playerAverage, firstPlayer, secondPlayer) {
-  return (
-    Number(playerAverage) - (Number(firstPlayer) + Number(secondPlayer)) / 2
-  );
-}
-function getPlayerLevel(index) {
-  let playerLevel,
-    playerlist = getPlayerList();
-  for (let i = 0; i < playerlist.length; i++) {
-    if (i === index) {
-      playerLevel = Number(playerlist[index]['level']);
-    }
-  }
-  return playerLevel;
-}
-*/
-
 // Team list display
 function teamListDisplay() {
   const teamListElement = document.getElementById('teamList');
@@ -316,15 +256,19 @@ function playerHighlight() {
 // Court
 function upArrow() {
   let currentNumberElement = document.getElementById('courtNumber'),
-    currentNumber = currentNumberElement.innerText,
-    newNumber = Number(currentNumber) + 1;
+    currentNumber = Number(currentNumberElement.innerText),
+    newNumber = currentNumber + 1;
   setCourtNumber(newNumber);
+
+  setCourtTile('Team to be assigned', 'Team to be assigned');
 }
 function downArrow() {
   let currentNumberElement = document.getElementById('courtNumber'),
-    currentNumber = currentNumberElement.innerText,
-    newNumber = Number(currentNumber) - 1;
+    currentNumber = Number(currentNumberElement.innerText),
+    newNumber = currentNumber - 1;
   setCourtNumber(newNumber);
+
+  setCourtTile('Team to be assigned', 'Team to be assigned');
 }
 function setCourtNumber(number) {
   let currentNumberElement = document.getElementById('courtNumber');
@@ -336,21 +280,44 @@ function setCourtNumber(number) {
 }
 function setCourtTile(firstTeam, secondTeam) {
   let tileParent = document.getElementById('courtTile'),
-    addArticleElement = document.createElement('article'),
-    addFirstTeamElement = document.createElement('p'),
-    addVsElement = document.createElement('p'),
-    addSecondTeamElement = document.createElement('p');
+    currentNumberElement = document.getElementById('courtNumber'),
+    currentNumber = Number(currentNumberElement.innerText);
 
-  addArticleElement.classList = 'tile is-child box';
-  addFirstTeamElement.classList = 'subtitle';
-  addVsElement.classList = 'subtitle is-size-6';
-  addSecondTeamElement.classList = 'subtitle';
+  removeAllChild('courtTile');
 
-  addArticleElement.appendChild(addFirstTeamElement);
-  addArticleElement.appendChild(addVsElement);
-  addArticleElement.appendChild(addSecondTeamElement);
-  tileParent.appendChild(addArticleElement);
+  for (let i = 0; i < currentNumber; i++) {
+    let addDivElement = document.createElement('div'),
+      addArticleElement = document.createElement('article'),
+      addFirstTeamElement = document.createElement('p'),
+      firstTeamNode = document.createTextNode(firstTeam),
+      addVsElement = document.createElement('p'),
+      vsNode = document.createTextNode('VS'),
+      addSecondTeamElement = document.createElement('p'),
+      secondTeamNode = document.createTextNode(secondTeam);
+
+    addArticleElement.classList = 'tile is-child box has-background-warning';
+    addFirstTeamElement.classList = 'subtitle';
+    addVsElement.classList = 'subtitle is-size-6';
+    addSecondTeamElement.classList = 'subtitle';
+    addDivElement.classList = 'tile is-parent';
+
+    addFirstTeamElement.appendChild(firstTeamNode);
+    addVsElement.appendChild(vsNode);
+    addSecondTeamElement.appendChild(secondTeamNode);
+    addArticleElement.appendChild(addFirstTeamElement);
+    addArticleElement.appendChild(addVsElement);
+    addArticleElement.appendChild(addSecondTeamElement);
+    addDivElement.appendChild(addArticleElement);
+    tileParent.appendChild(addDivElement);
+  }
 }
+function removeAllChild(id) {
+  let parentElement = document.getElementById(id);
+  while (parentElement.firstChild) {
+    parentElement.removeChild(parentElement.lastChild);
+  }
+}
+
 function addCourt() {
   let courtNumber = document.getElementById('courtNumber').innerHTML,
     tileNumber = document.getElementById('courtTile').childElementCount;
