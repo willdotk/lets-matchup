@@ -1,15 +1,27 @@
 let memberList = new Array(),
   playerList = new Array(),
   totalTeamList = new Array(),
+  matchList = new Array(),
   lStorage = window.localStorage,
-  memberStorage = lStorage.getItem('members'),
   members = document.getElementById('members'),
-  memberObject = JSON.parse(memberStorage),
+  memberObject = getObject('members'),
+  teamlistObject = getObject('teamlist'),
+  matchlistObject = getObject('matchlist'),
+  tileParent = document.getElementById('courtTile'),
   teamMatchTolerance = 0.2;
 
+// General element creation
+function divElement() {
+  return document.createElement('div');
+}
+function pElement() {
+  return document.createElement('p');
+}
+
+// Generate and display member list on side menu
 function memberToList(name) {
   let addListElement = document.createElement('li'),
-    addCardElement = document.createElement('div'),
+    addCardElement = divElement(),
     deleteButtonImg = addIcon(
       'img/user-minus-solid.svg',
       'width:3rem; cursor:pointer'
@@ -18,9 +30,9 @@ function memberToList(name) {
     memberName = document.createTextNode(name),
     cardContent = document.createElement('card-content'),
     cardFooter = document.createElement('footer'),
-    namePElement = document.createElement('p'),
-    delBtnItem = document.createElement('div'),
-    switchBtnItem = document.createElement('div');
+    namePElement = pElement(),
+    delBtnItem = divElement(),
+    switchBtnItem = divElement();
 
   addCardElement.classList = 'card';
   addCardElement.style = 'margin: 0.5rem;';
@@ -46,7 +58,6 @@ function memberToList(name) {
   addListElement.appendChild(addCardElement);
   members.appendChild(addListElement);
 }
-
 function addIcon(src, style) {
   let spanElement = document.createElement('span'),
     buttonImg = document.createElement('img');
@@ -87,6 +98,7 @@ function deleteMember(event) {
       }
     }
     setMemberStorage(memberObject);
+    location.reload();
   }
 }
 
@@ -117,7 +129,7 @@ function attendanceCheck(event) {
 }
 function playerOnBench(name) {
   const getGridDiv = document.getElementById('playerOnBench'),
-    addPElement = document.createElement('p');
+    addPElement = pElement();
   addPElement.classList =
     'button is-capitalized is-info is-inverted is-outlined';
   addPElement.id = name + 'Player';
@@ -220,7 +232,7 @@ function teamListDisplay() {
   const teamListElement = document.getElementById('teamList');
   getTeamList(getPlayerList());
   for (let i = 0; i < totalTeamList.length; i++) {
-    let teamNameElement = document.createElement('p'),
+    let teamNameElement = pElement(),
       teamName =
         totalTeamList[i][0]['name'] + ' & ' + totalTeamList[i][1]['name'];
     teamNameNode = document.createTextNode(teamName);
@@ -230,6 +242,8 @@ function teamListDisplay() {
   }
   playerDeHighlight();
   playerHighlight();
+  getMatchList();
+  firstCourtInit();
 }
 function playerDeHighlight() {
   let playerList = getPlayerList();
@@ -259,16 +273,13 @@ function upArrow() {
     currentNumber = Number(currentNumberElement.innerText),
     newNumber = currentNumber + 1;
   setCourtNumber(newNumber);
-
-  setCourtTile('Team to be assigned', 'Team to be assigned');
+  addCourt();
 }
 function downArrow() {
   let currentNumberElement = document.getElementById('courtNumber'),
     currentNumber = Number(currentNumberElement.innerText),
     newNumber = currentNumber - 1;
   setCourtNumber(newNumber);
-
-  setCourtTile('Team to be assigned', 'Team to be assigned');
 }
 function setCourtNumber(number) {
   let currentNumberElement = document.getElementById('courtNumber');
@@ -278,51 +289,107 @@ function setCourtNumber(number) {
     currentNumberElement.innerHTML = 1;
   }
 }
-function setCourtTile(firstTeam, secondTeam) {
-  let tileParent = document.getElementById('courtTile'),
-    currentNumberElement = document.getElementById('courtNumber'),
-    currentNumber = Number(currentNumberElement.innerText);
+function getCourtNumber() {
+  let currentNumberElement = document.getElementById('courtNumber');
+  return Number(currentNumberElement.innerText);
+}
 
-  removeAllChild('courtTile');
+function getMatchList() {
+  for (let i = 0; i < totalTeamList.length; i++) {
+    for (let j = i + 1; j < totalTeamList.length; j++) {
+      let tempList = [];
+      tempList.push(totalTeamList[i]);
+      tempList.push(totalTeamList[j]);
+      tempList.sort();
+      matchList.push(tempList);
+    }
+  }
+  Array.from(new Set(matchList));
+  return matchList;
+}
 
-  for (let i = 0; i < currentNumber; i++) {
-    let addDivElement = document.createElement('div'),
-      addArticleElement = document.createElement('article'),
-      addFirstTeamElement = document.createElement('p'),
-      firstTeamNode = document.createTextNode(firstTeam),
-      addVsElement = document.createElement('p'),
-      vsNode = document.createTextNode('VS'),
-      addSecondTeamElement = document.createElement('p'),
-      secondTeamNode = document.createTextNode(secondTeam);
+function addCourt() {
+  let courtCount = getCourtNumber(),
+    courtTileCount = document.getElementById('courtTile').childElementCount;
 
-    addArticleElement.classList = 'tile is-child box has-background-warning';
-    addFirstTeamElement.classList = 'subtitle';
-    addVsElement.classList = 'subtitle is-size-6';
-    addSecondTeamElement.classList = 'subtitle';
-    addDivElement.classList = 'tile is-parent';
+  for (let i = 0; i < matchList.length; i++) {
+    if (
+      courtCount - 1 === courtTileCount &&
+      matchList[i][0][0]['oncourt'] !== true &&
+      matchList[i][0][1]['oncourt'] !== true &&
+      matchList[i][1][0]['oncourt'] !== true &&
+      matchList[i][1][1]['oncourt'] !== true
+    ) {
+      let firstTeamName =
+          matchList[i][0][0]['name'] + ' & ' + matchList[i][0][1]['name'],
+        secondTeamName =
+          matchList[i][1][0]['name'] + ' & ' + matchList[i][1][1]['name'],
+        tempPlayerList = [
+          matchList[i][0][0]['name'],
+          matchList[i][0][1]['name'],
+          matchList[i][1][0]['name'],
+          matchList[i][1][1]['name'],
+        ];
 
-    addFirstTeamElement.appendChild(firstTeamNode);
-    addVsElement.appendChild(vsNode);
-    addSecondTeamElement.appendChild(secondTeamNode);
-    addArticleElement.appendChild(addFirstTeamElement);
-    addArticleElement.appendChild(addVsElement);
-    addArticleElement.appendChild(addSecondTeamElement);
-    addDivElement.appendChild(addArticleElement);
-    tileParent.appendChild(addDivElement);
+      for (let i = 0; i < memberObject.length; i++) {
+        for (let j = 0; j < tempPlayerList.length; j++) {
+          if (memberObject[i]['name'] === tempPlayerList[j]) {
+            memberObject[i]['oncourt'] = true;
+          }
+        }
+      }
+      setMemberStorage(memberObject);
+      arrangeTeamOnCourt(firstTeamName, secondTeamName);
+      return;
+    }
   }
 }
+
+function arrangeTeamOnCourt(firstTeam, secondTeam) {
+  let addDivElement = divElement(),
+    addArticleElement = document.createElement('article'),
+    addFirstTeamElement = pElement(),
+    firstTeamNode = document.createTextNode(firstTeam),
+    addVsElement = pElement(),
+    vsNode = document.createTextNode('VS'),
+    addSecondTeamElement = pElement(),
+    secondTeamNode = document.createTextNode(secondTeam);
+
+  addArticleElement.classList = 'tile is-child box has-background-warning';
+  addFirstTeamElement.classList = 'subtitle is-capitalized';
+  addVsElement.classList = 'subtitle is-size-6';
+  addSecondTeamElement.classList = 'subtitle is-capitalized';
+  addDivElement.classList = 'tile is-parent';
+
+  addFirstTeamElement.appendChild(firstTeamNode);
+  addVsElement.appendChild(vsNode);
+  addSecondTeamElement.appendChild(secondTeamNode);
+  addArticleElement.appendChild(addFirstTeamElement);
+  addArticleElement.appendChild(addVsElement);
+  addArticleElement.appendChild(addSecondTeamElement);
+  addDivElement.appendChild(addArticleElement);
+  tileParent.appendChild(addDivElement);
+}
+
 function removeAllChild(id) {
   let parentElement = document.getElementById(id);
   while (parentElement.firstChild) {
     parentElement.removeChild(parentElement.lastChild);
   }
 }
-
-function addCourt() {
-  let courtNumber = document.getElementById('courtNumber').innerHTML,
-    tileNumber = document.getElementById('courtTile').childElementCount;
+function removeFirstChild(id) {
+  let parentElement = document.getElementById(id);
+  parentElement.removeChild(parentElement.firstChild);
 }
-
+function matchListComparison(firstcourtmatch, secondcourtmatch) {
+  for (let i = 0; i < firstcourtmatch.length; i++) {
+    for (let j = 0; j < secondcourtmatch.length; j++) {
+      if (firstcourtmatch[i] === secondcourtmatch[j]) {
+        return true;
+      }
+    }
+  }
+}
 // Localstorage
 function checkExistingMemberName(name) {
   for (let i = 0; i < sortedObject(memberObject).length; i++) {
@@ -348,10 +415,17 @@ function setMemberToStorage(name, level) {
 function setMemberStorage(list) {
   lStorage.setItem('members', JSON.stringify(list));
 }
+function setTeamListStorage(list) {
+  lStorage.setItem('teamlist', JSON.stringify(list));
+}
+function setMatchListStorage(list) {
+  lStorage.setItem('matchlist', JSON.stringify(list));
+}
 
-function getMemberObject(string) {
-  let memberObj = JSON.parse(string);
-  return memberObj;
+function getObject(object) {
+  let lStorageObject = lStorage.getItem(object);
+  parsedObj = JSON.parse(lStorageObject);
+  return parsedObj;
 }
 
 // modal
@@ -385,6 +459,7 @@ function addBtn() {
   } else {
     setMemberToStorage(getNameInput(), getLevelInput());
     deactiveModal();
+    location.reload();
   }
 }
 
@@ -410,7 +485,7 @@ function initPlayerList() {
       let name = memberObject[i]['name'],
         inputId = name + 'OnOff',
         inputElement = document.getElementById(inputId),
-        addPElement = document.createElement('p');
+        addPElement = pElement();
       addPElement.classList =
         'button is-capitalized is-info is-inverted is-outlined';
       addPElement.innerHTML = name;
@@ -422,7 +497,43 @@ function initPlayerList() {
   playerNumber();
   teamNumber();
   teamListDisplay();
+  playerOncourtInit();
+  firstCourtInit();
 }
+function playerOncourtInit() {
+  for (let i = 0; i < memberObject.length; i++) {
+    memberObject[i]['oncourt'] = false;
+  }
+}
+
+function initCourtTile(firstTeam, secondTeam) {
+  removeAllChild('courtTile');
+  arrangeTeamOnCourt(firstTeam, secondTeam);
+}
+function firstCourtInit() {
+  // matchList[nth match][nth team(0 or 1)][nth person(0 or 1)]['name']
+  let firstTeamName =
+      matchList[0][0][0]['name'] + ' & ' + matchList[0][0][1]['name'],
+    secondTeamName =
+      matchList[0][1][0]['name'] + ' & ' + matchList[0][1][1]['name'],
+    tempPlayerList = [
+      matchList[0][0][0]['name'],
+      matchList[0][0][1]['name'],
+      matchList[0][1][0]['name'],
+      matchList[0][1][1]['name'],
+    ];
+
+  for (let i = 0; i < memberObject.length; i++) {
+    for (let j = 0; j < tempPlayerList.length; j++) {
+      if (memberObject[i]['name'] === tempPlayerList[j]) {
+        memberObject[i]['oncourt'] = true;
+      }
+    }
+  }
+  setMemberStorage(memberObject);
+  initCourtTile(firstTeamName, secondTeamName);
+}
+
 function init() {
   if (memberObject !== null) {
     initMemberList();
