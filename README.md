@@ -1,5 +1,5 @@
-# lets-matchup
+# Match up team
 
-### Matching up a team app for double match sports.
-### Team based on individual player's level.
-### Vanilla Javascript with Bulma project.
+#### Team matching up app for double match sports.
+#### Team based on individual player's level.
+#### Vanilla Javascript with Bulma project.

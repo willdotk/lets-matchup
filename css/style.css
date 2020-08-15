@@ -1,5 +1,13 @@
+.navbar {
+  min-height: 6rem;
+}
+
 .field-label {
   text-align: left;
+}
+
+.level-right.is-flex-mobile {
+  justify-content: center;
 }
 
 /* The switch - the box around the slider */
@@ -82,11 +90,11 @@ input:checked + .slider:before {
 
 .tile.is-parent.has-vcentered {
   -webkit-box-align: center;
-     -ms-flex-align: center;
-        align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 .columns.has-vcentered {
   -webkit-box-align: center;
-     -ms-flex-align: center;
-        align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
 }

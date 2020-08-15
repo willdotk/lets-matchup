@@ -7,7 +7,7 @@ let memberList = new Array(),
   memberObject = getObject('members'),
   teamlistObject = getObject('teamlist'),
   matchlistObject = getObject('matchlist'),
-  tileParent = document.getElementById('courtTile'),
+  tileAncestor = document.getElementById('courtTile'),
   teamMatchTolerance = 0.2;
 
 // General element creation
@@ -279,19 +279,23 @@ function downArrow() {
   let currentNumberElement = document.getElementById('courtNumber'),
     currentNumber = Number(currentNumberElement.innerText),
     newNumber = currentNumber - 1;
+
   setCourtNumber(newNumber);
+  extractCourt();
 }
-function setCourtNumber(number) {
-  let currentNumberElement = document.getElementById('courtNumber');
+function setCourtNumber(newnumber) {
+  let currentNumberElement = document.getElementById('courtNumber'),
+    number;
+  if (newnumber > Math.floor(teamNumber() / 2)) {
+    number = Math.floor(teamNumber() / 2);
+  } else {
+    number = newnumber;
+  }
   if (number >= 1) {
     currentNumberElement.innerHTML = number;
   } else {
     currentNumberElement.innerHTML = 1;
   }
-}
-function getCourtNumber() {
-  let currentNumberElement = document.getElementById('courtNumber');
-  return Number(currentNumberElement.innerText);
 }
 
 function getMatchList() {
@@ -309,12 +313,9 @@ function getMatchList() {
 }
 
 function addCourt() {
-  let courtCount = getCourtNumber(),
-    courtTileCount = document.getElementById('courtTile').childElementCount;
-
+  let matchListId;
   for (let i = 0; i < matchList.length; i++) {
     if (
-      courtCount - 1 === courtTileCount &&
       matchList[i][0][0]['oncourt'] !== true &&
       matchList[i][0][1]['oncourt'] !== true &&
       matchList[i][1][0]['oncourt'] !== true &&
@@ -330,7 +331,7 @@ function addCourt() {
           matchList[i][1][0]['name'],
           matchList[i][1][1]['name'],
         ];
-
+      matchListId = i;
       for (let i = 0; i < memberObject.length; i++) {
         for (let j = 0; j < tempPlayerList.length; j++) {
           if (memberObject[i]['name'] === tempPlayerList[j]) {
@@ -339,14 +340,39 @@ function addCourt() {
         }
       }
       setMemberStorage(memberObject);
-      arrangeTeamOnCourt(firstTeamName, secondTeamName);
+      arrangeTeamOnCourt(firstTeamName, secondTeamName, matchListId);
       return;
     }
   }
 }
+function extractCourt() {
+  let courtTile = document.getElementById('courtTile'),
+    courtTileLast = courtTile.lastChild,
+    selectedMatch = matchList[courtTileLast.id],
+    tempPlayerList = [
+      selectedMatch[0][0]['name'],
+      selectedMatch[0][1]['name'],
+      selectedMatch[1][0]['name'],
+      selectedMatch[1][1]['name'],
+    ];
 
-function arrangeTeamOnCourt(firstTeam, secondTeam) {
-  let addDivElement = divElement(),
+  if (courtTile.childElementCount > 1) {
+    courtTile.removeChild(courtTile.lastChild);
+    for (let i = 0; i < memberObject.length; i++) {
+      for (let j = 0; j < tempPlayerList.length; j++) {
+        if (memberObject[i]['name'] === tempPlayerList[j]) {
+          memberObject[i]['oncourt'] = false;
+        }
+      }
+    }
+    setMemberStorage(memberObject);
+  } else {
+    return;
+  }
+}
+
+function arrangeTeamOnCourt(firstTeam, secondTeam, matchlistindex) {
+  let addTileParent = divElement(),
     addArticleElement = document.createElement('article'),
     addFirstTeamElement = pElement(),
     firstTeamNode = document.createTextNode(firstTeam),
@@ -359,7 +385,7 @@ function arrangeTeamOnCourt(firstTeam, secondTeam) {
   addFirstTeamElement.classList = 'subtitle is-capitalized';
   addVsElement.classList = 'subtitle is-size-6';
   addSecondTeamElement.classList = 'subtitle is-capitalized';
-  addDivElement.classList = 'tile is-parent';
+  addTileParent.classList = 'tile is-parent';
 
   addFirstTeamElement.appendChild(firstTeamNode);
   addVsElement.appendChild(vsNode);
@@ -367,19 +393,15 @@ function arrangeTeamOnCourt(firstTeam, secondTeam) {
   addArticleElement.appendChild(addFirstTeamElement);
   addArticleElement.appendChild(addVsElement);
   addArticleElement.appendChild(addSecondTeamElement);
-  addDivElement.appendChild(addArticleElement);
-  tileParent.appendChild(addDivElement);
+  addTileParent.appendChild(addArticleElement);
+  addTileParent.id = matchlistindex;
+  tileAncestor.appendChild(addTileParent);
 }
-
-function removeAllChild(id) {
-  let parentElement = document.getElementById(id);
+function removeAllChild(parentid) {
+  let parentElement = document.getElementById(parentid);
   while (parentElement.firstChild) {
     parentElement.removeChild(parentElement.lastChild);
   }
-}
-function removeFirstChild(id) {
-  let parentElement = document.getElementById(id);
-  parentElement.removeChild(parentElement.firstChild);
 }
 function matchListComparison(firstcourtmatch, secondcourtmatch) {
   for (let i = 0; i < firstcourtmatch.length; i++) {
@@ -390,6 +412,7 @@ function matchListComparison(firstcourtmatch, secondcourtmatch) {
     }
   }
 }
+
 // Localstorage
 function checkExistingMemberName(name) {
   for (let i = 0; i < sortedObject(memberObject).length; i++) {
@@ -508,7 +531,7 @@ function playerOncourtInit() {
 
 function initCourtTile(firstTeam, secondTeam) {
   removeAllChild('courtTile');
-  arrangeTeamOnCourt(firstTeam, secondTeam);
+  arrangeTeamOnCourt(firstTeam, secondTeam, 0);
 }
 function firstCourtInit() {
   // matchList[nth match][nth team(0 or 1)][nth person(0 or 1)]['name']

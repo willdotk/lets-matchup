@@ -89,7 +89,7 @@
                     Member
                   </div>
                 </div>
-                <div class="level-right" onclick="activeModal()">
+                <div class="level-right is-flex-mobile" onclick="activeModal()">
                   <div class="level-item icon" style="cursor: pointer;">
                     <img src="img/plus.svg" alt="add member" />
                   </div>
@@ -132,7 +132,7 @@
           <section class="tile is-ancestor has-text-centered">
             <div class="tile is-parent has-vcentered">
               <article class="tile is-child">
-                <p class="title">Play Courts</p>
+                <p class="title" style="margin: 2rem;">Play Courts</p>
               </article>
               <article class="tile is-child">
                 <div class="columns has-vcentered">
@@ -167,6 +167,7 @@
               </article>
               <article class="tile is-child">
                 <button
+                  style="margin: 2rem;"
                   class="button is-danger is-medium"
                   onclick="location.reload()"
                 >
@@ -179,15 +180,10 @@
           <div class="columns">
             <div class="column">
               <section class="info-tiles">
-                <div id="courtTile" class="tile is-ancestor has-text-centered">
-                  <!-- <div class="tile is-parent">
-                    <article class="tile is-child box has-background-warning">
-                      <p class="subtitle">Team to be assigned</p>
-                      <p class="subtitle is-size-6">VS</p>
-                      <p class="subtitle">Team to be assigned</p>
-                    </article>
-                  </div> -->
-                </div>
+                <div
+                  id="courtTile"
+                  class="tile is-ancestor has-text-centered"
+                ></div>
               </section>
             </div>
           </div>
