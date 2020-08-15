@@ -54,7 +54,7 @@ function memberToList(name) {
 
   addCardElement.appendChild(cardContent);
   addCardElement.appendChild(cardFooter);
-  addListElement.id = name;
+  addListElement.id = name + 'Member';
   addListElement.appendChild(addCardElement);
   members.appendChild(addListElement);
 }
@@ -93,7 +93,7 @@ function deleteMember(event) {
       id = li.id;
     members.removeChild(li);
     for (let i = 0; i < memberObject.length; i++) {
-      if (memberObject[i]['name'] === id) {
+      if (memberObject[i]['name'] === id.slice(0, -6)) {
         memberObject.splice(i, 1);
       }
     }
@@ -110,7 +110,7 @@ function attendanceCheck(event) {
     checker = document.getElementById(inputId);
   if (checker.checked === true) {
     for (let i = 0; i < memberObject.length; i++) {
-      if (memberObject[i]['name'] === name) {
+      if (memberObject[i]['name'] === name.slice(0, -6)) {
         memberObject[i]['attend'] = true;
         playerOnBench(name);
       }
@@ -240,31 +240,35 @@ function teamListDisplay() {
     teamNameElement.appendChild(teamNameNode);
     teamListElement.appendChild(teamNameElement);
   }
-  playerDeHighlight();
-  playerHighlight();
+  playerOnCourtHighlight();
   getMatchList();
   firstCourtInit();
 }
 function playerDeHighlight() {
-  let playerList = getPlayerList();
-  for (let i = 0; i < playerList.length; i++) {
-    let name = playerList[i]['name'],
-      playerId = name + 'Player',
-      playerElement = document.getElementById(playerId);
-    playerElement.classList =
-      'button is-capitalized is-info is-inverted is-outlined';
+  for (let i = 0; i < memberObject.length; i++) {
+    if (memberObject[i]['oncourt'] !== true) {
+      let name = memberObject[i]['name'],
+        playerId = name + 'Player',
+        playerElement = document.getElementById(playerId);
+      playerElement.classList =
+        'button is-capitalized is-info is-inverted is-outlined';
+    }
   }
 }
 function playerHighlight() {
-  for (let i = 0; i < totalTeamList.length; i++) {
-    for (let j = 0; j < totalTeamList[i].length; j++) {
-      let name = totalTeamList[i][j]['name'],
+  for (let i = 0; i < memberObject.length; i++) {
+    if (memberObject[i]['oncourt'] === true) {
+      let name = memberObject[i]['name'],
         playerId = name + 'Player',
         playerElement = document.getElementById(playerId);
       playerElement.classList =
         'button is-capitalized is-info is-inverted is-outlined is-hovered';
     }
   }
+}
+function playerOnCourtHighlight() {
+  playerDeHighlight();
+  playerHighlight();
 }
 
 // Court
@@ -274,14 +278,15 @@ function upArrow() {
     newNumber = currentNumber + 1;
   setCourtNumber(newNumber);
   addCourt();
+  playerOnCourtHighlight();
 }
 function downArrow() {
   let currentNumberElement = document.getElementById('courtNumber'),
     currentNumber = Number(currentNumberElement.innerText),
     newNumber = currentNumber - 1;
-
   setCourtNumber(newNumber);
   extractCourt();
+  playerOnCourtHighlight();
 }
 function setCourtNumber(newnumber) {
   let currentNumberElement = document.getElementById('courtNumber'),
