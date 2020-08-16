@@ -112,14 +112,14 @@ function attendanceCheck(event) {
     for (let i = 0; i < memberObject.length; i++) {
       if (memberObject[i]['name'] === name.slice(0, -6)) {
         memberObject[i]['attend'] = true;
-        playerOnBench(name);
+        playerOnBench(name.slice(0, -6));
       }
     }
   } else {
     for (let i = 0; i < memberObject.length; i++) {
-      if (memberObject[i]['name'] === name) {
+      if (memberObject[i]['name'] === name.slice(0, -6)) {
         memberObject[i]['attend'] = false;
-        playerAbsent(name);
+        playerAbsent(name.slice(0, -6));
       }
     }
   }
@@ -302,7 +302,6 @@ function setCourtNumber(newnumber) {
     currentNumberElement.innerHTML = 1;
   }
 }
-
 function getMatchList() {
   for (let i = 0; i < totalTeamList.length; i++) {
     for (let j = i + 1; j < totalTeamList.length; j++) {
@@ -378,7 +377,37 @@ function extractCourt() {
 
 function arrangeTeamOnCourt(firstTeam, secondTeam, matchlistindex) {
   let addTileParent = divElement(),
-    addArticleElement = document.createElement('article'),
+    addTileChild = document.createElement('article'),
+    courtHero = addCourtHero(firstTeam, secondTeam);
+
+  addTileChild.classList = 'tile is-child box';
+  addTileChild.style = 'padding: 0;';
+  addTileParent.classList = 'tile is-parent';
+
+  addTileChild.appendChild(courtHero);
+  addTileParent.appendChild(addTileChild);
+  addTileParent.id = matchlistindex;
+  tileAncestor.appendChild(addTileParent);
+}
+function addCourtHero(firstTeam, secondTeam) {
+  let courtHero = divElement(),
+    courtHeroHead = addCourtHeroHead(),
+    courtHeroBody = addCourtHeroBody(firstTeam, secondTeam),
+    courtHeroFoot = addCourtHeroFoot();
+  courtHero.classList = 'hero';
+  courtHero.appendChild(courtHeroHead);
+  courtHero.appendChild(courtHeroBody);
+  courtHero.appendChild(courtHeroFoot);
+  return courtHero;
+}
+function addCourtHeroHead() {
+  let courtHeroHead = divElement();
+  courtHeroHead.classList = 'hero-head subtitle';
+  courtHeroHead.innerText = 'Court Number';
+  return courtHeroHead;
+}
+function addCourtHeroBody(firstTeam, secondTeam) {
+  let courtHeroBody = divElement(),
     addFirstTeamElement = pElement(),
     firstTeamNode = document.createTextNode(firstTeam),
     addVsElement = pElement(),
@@ -386,35 +415,58 @@ function arrangeTeamOnCourt(firstTeam, secondTeam, matchlistindex) {
     addSecondTeamElement = pElement(),
     secondTeamNode = document.createTextNode(secondTeam);
 
-  addArticleElement.classList = 'tile is-child box has-background-warning';
+  courtHeroBody.classList = 'hero-body has-background-warning';
+
   addFirstTeamElement.classList = 'subtitle is-capitalized';
   addVsElement.classList = 'subtitle is-size-6';
   addSecondTeamElement.classList = 'subtitle is-capitalized';
-  addTileParent.classList = 'tile is-parent';
 
   addFirstTeamElement.appendChild(firstTeamNode);
   addVsElement.appendChild(vsNode);
   addSecondTeamElement.appendChild(secondTeamNode);
-  addArticleElement.appendChild(addFirstTeamElement);
-  addArticleElement.appendChild(addVsElement);
-  addArticleElement.appendChild(addSecondTeamElement);
-  addTileParent.appendChild(addArticleElement);
-  addTileParent.id = matchlistindex;
-  tileAncestor.appendChild(addTileParent);
+  courtHeroBody.appendChild(addFirstTeamElement);
+  courtHeroBody.appendChild(addVsElement);
+  courtHeroBody.appendChild(addSecondTeamElement);
+  return courtHeroBody;
+}
+function addCourtHeroFoot() {
+  let courtHeroFoot = divElement(),
+    columns = divElement(),
+    timeColumn = divElement(),
+    startColumn = divElement(),
+    finishColumn = divElement(),
+    timeElement = pElement(),
+    startBtn = document.createElement('button'),
+    finishBtn = document.createElement('button');
+  courtHeroFoot.classList = 'hero-foot';
+  courtHeroFoot.style = 'margin: 0.5rem;';
+
+  columns.classList = 'columns';
+  timeColumn.classList = 'column';
+  timeColumn.style = 'min-width: 7rem;';
+  startColumn.classList = 'column';
+  finishColumn.classList = 'column';
+  timeElement.classList = 'title';
+  timeElement.innerText = '10:00';
+  startBtn.classList = 'button is-medium is-fullwidth';
+  startBtn.innerText = 'Start';
+  finishBtn.classList = 'button is-medium is-fullwidth';
+  finishBtn.innerText = 'Finish';
+
+  timeColumn.appendChild(timeElement);
+  startColumn.appendChild(startBtn);
+  finishColumn.appendChild(finishBtn);
+  columns.appendChild(timeColumn);
+  columns.appendChild(startColumn);
+  columns.appendChild(finishColumn);
+  courtHeroFoot.appendChild(columns);
+
+  return courtHeroFoot;
 }
 function removeAllChild(parentid) {
   let parentElement = document.getElementById(parentid);
   while (parentElement.firstChild) {
     parentElement.removeChild(parentElement.lastChild);
-  }
-}
-function matchListComparison(firstcourtmatch, secondcourtmatch) {
-  for (let i = 0; i < firstcourtmatch.length; i++) {
-    for (let j = 0; j < secondcourtmatch.length; j++) {
-      if (firstcourtmatch[i] === secondcourtmatch[j]) {
-        return true;
-      }
-    }
   }
 }
 
@@ -454,41 +506,6 @@ function getObject(object) {
   let lStorageObject = lStorage.getItem(object);
   parsedObj = JSON.parse(lStorageObject);
   return parsedObj;
-}
-
-// modal
-function activeModal() {
-  let modal = document.getElementById('addMemberModal'),
-    modalContainer = document.querySelector('html'),
-    nameInput = document.getElementById('nameInput'),
-    levelInput = document.getElementById('levelInput');
-  nameInput.value = '';
-  levelInput.value = '';
-  modal.classList.add('is-active');
-  modalContainer.classList.add('is-clipped');
-}
-function deactiveModal() {
-  let modal = document.getElementById('addMemberModal'),
-    modalContainer = document.querySelector('html');
-  modal.classList.remove('is-active');
-  modalContainer.classList.remove('is-clipped');
-}
-function getNameInput() {
-  let nameInput = document.getElementById('nameInput').value;
-  return nameInput;
-}
-function getLevelInput() {
-  let levelInput = document.getElementById('levelInput').value;
-  return levelInput;
-}
-function addBtn() {
-  if (checkExistingMemberName(getNameInput())) {
-    alert('Same named member exist \n' + 'Please use another name');
-  } else {
-    setMemberToStorage(getNameInput(), getLevelInput());
-    deactiveModal();
-    location.reload();
-  }
 }
 
 // Initialise member and player list on start
