@@ -18,7 +18,7 @@
     <nav class="navbar is-white">
       <div class="container">
         <div class="navbar-brand">
-          <p class="navbar-item brand-text is-size-3">
+          <p class="navbar-item brand-text is-size-3" contenteditable="true">
             CHCH Badminton (make editable)
           </p>
         </div>
@@ -116,10 +116,13 @@
                 <p id="playerNumber" class="title">0</p>
                 <p class="subtitle">Players</p>
               </article>
-
               <article class="tile is-child box">
                 <p id="teamNumber" class="title">0</p>
                 <p class="subtitle">Teams</p>
+              </article>
+              <article class="tile is-child box">
+                <p id="matchNumber" class="title">0</p>
+                <p class="subtitle">Matches</p>
               </article>
             </div>
             <div class="tile is-parent">
@@ -168,7 +171,7 @@
               <article class="tile is-child">
                 <button
                   style="margin: 2rem;"
-                  class="button is-danger is-medium"
+                  class="button is-info is-outlined is-medium"
                   onclick="location.reload()"
                 >
                   Rearrange team

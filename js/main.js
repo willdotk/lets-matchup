@@ -1,3 +1,5 @@
+'use strict';
+
 let memberList = new Array(),
   playerList = new Array(),
   totalTeamList = new Array(),
@@ -5,8 +7,6 @@ let memberList = new Array(),
   lStorage = window.localStorage,
   members = document.getElementById('members'),
   memberObject = getObject('members'),
-  teamlistObject = getObject('teamlist'),
-  matchlistObject = getObject('matchlist'),
   tileAncestor = document.getElementById('courtTile'),
   teamMatchTolerance = 0.2;
 
@@ -158,6 +158,12 @@ function teamNumber() {
   teamNumber.innerText = teamCount;
   return Math.floor(teamCount);
 }
+function matchNumber() {
+  const matchNumber = document.getElementById('matchNumber');
+  let matchCount = matchList.length;
+  matchNumber.innerText = matchCount;
+  return Math.floor(matchCount);
+}
 
 // Match up team members
 function getTeamList(playerlist) {
@@ -234,8 +240,8 @@ function teamListDisplay() {
   for (let i = 0; i < totalTeamList.length; i++) {
     let teamNameElement = pElement(),
       teamName =
-        totalTeamList[i][0]['name'] + ' & ' + totalTeamList[i][1]['name'];
-    teamNameNode = document.createTextNode(teamName);
+        totalTeamList[i][0]['name'] + ' & ' + totalTeamList[i][1]['name'],
+      teamNameNode = document.createTextNode(teamName);
     teamNameElement.classList = 'is-size-5 is-capitalized';
     teamNameElement.appendChild(teamNameNode);
     teamListElement.appendChild(teamNameElement);
@@ -246,7 +252,10 @@ function teamListDisplay() {
 }
 function playerDeHighlight() {
   for (let i = 0; i < memberObject.length; i++) {
-    if (memberObject[i]['oncourt'] !== true) {
+    if (
+      memberObject[i]['oncourt'] !== true &&
+      memberObject[i]['attend'] === true
+    ) {
       let name = memberObject[i]['name'],
         playerId = name + 'Player',
         playerElement = document.getElementById(playerId);
@@ -257,7 +266,10 @@ function playerDeHighlight() {
 }
 function playerHighlight() {
   for (let i = 0; i < memberObject.length; i++) {
-    if (memberObject[i]['oncourt'] === true) {
+    if (
+      memberObject[i]['oncourt'] === true &&
+      memberObject[i]['attend'] === true
+    ) {
       let name = memberObject[i]['name'],
         playerId = name + 'Player',
         playerElement = document.getElementById(playerId);
@@ -279,6 +291,7 @@ function upArrow() {
   setCourtNumber(newNumber);
   addCourt();
   playerOnCourtHighlight();
+  courtNumberUpdate();
 }
 function downArrow() {
   let currentNumberElement = document.getElementById('courtNumber'),
@@ -287,6 +300,7 @@ function downArrow() {
   setCourtNumber(newNumber);
   extractCourt();
   playerOnCourtHighlight();
+  courtNumberUpdate();
 }
 function setCourtNumber(newnumber) {
   let currentNumberElement = document.getElementById('courtNumber'),
@@ -313,7 +327,19 @@ function getMatchList() {
     }
   }
   Array.from(new Set(matchList));
+  for (let i = 0; i < matchList.length; i++) {
+    matchList[i][2] = i;
+  }
   return matchList;
+}
+function getSelectedMatch(tileparentid) {
+  let selectedMatch;
+  for (let i = 0; i < matchList.length; i++) {
+    if (Number(matchList[i][2]) === Number(tileparentid)) {
+      selectedMatch = matchList[i];
+    }
+  }
+  return selectedMatch;
 }
 
 function addCourt() {
@@ -335,7 +361,7 @@ function addCourt() {
           matchList[i][1][0]['name'],
           matchList[i][1][1]['name'],
         ];
-      matchListId = i;
+      matchListId = matchList[i][2];
       for (let i = 0; i < memberObject.length; i++) {
         for (let j = 0; j < tempPlayerList.length; j++) {
           if (memberObject[i]['name'] === tempPlayerList[j]) {
@@ -352,7 +378,7 @@ function addCourt() {
 function extractCourt() {
   let courtTile = document.getElementById('courtTile'),
     courtTileLast = courtTile.lastChild,
-    selectedMatch = matchList[courtTileLast.id],
+    selectedMatch = getSelectedMatch(courtTileLast.id),
     tempPlayerList = [
       selectedMatch[0][0]['name'],
       selectedMatch[0][1]['name'],
@@ -388,6 +414,7 @@ function arrangeTeamOnCourt(firstTeam, secondTeam, matchlistindex) {
   addTileParent.appendChild(addTileChild);
   addTileParent.id = matchlistindex;
   tileAncestor.appendChild(addTileParent);
+  matchNumber();
 }
 function addCourtHero(firstTeam, secondTeam) {
   let courtHero = divElement(),
@@ -402,7 +429,7 @@ function addCourtHero(firstTeam, secondTeam) {
 }
 function addCourtHeroHead() {
   let courtHeroHead = divElement();
-  courtHeroHead.classList = 'hero-head subtitle';
+  courtHeroHead.classList = 'hero-head is-size-3';
   courtHeroHead.innerText = 'Court Number';
   return courtHeroHead;
 }
@@ -417,9 +444,9 @@ function addCourtHeroBody(firstTeam, secondTeam) {
 
   courtHeroBody.classList = 'hero-body has-background-warning';
 
-  addFirstTeamElement.classList = 'subtitle is-capitalized';
+  addFirstTeamElement.classList = 'subtitle is-capitalized is-size-4';
   addVsElement.classList = 'subtitle is-size-6';
-  addSecondTeamElement.classList = 'subtitle is-capitalized';
+  addSecondTeamElement.classList = 'subtitle is-capitalized is-size-4';
 
   addFirstTeamElement.appendChild(firstTeamNode);
   addVsElement.appendChild(vsNode);
@@ -446,12 +473,13 @@ function addCourtHeroFoot() {
   timeColumn.style = 'min-width: 7rem;';
   startColumn.classList = 'column';
   finishColumn.classList = 'column';
-  timeElement.classList = 'title';
-  timeElement.innerText = '10:00';
-  startBtn.classList = 'button is-medium is-fullwidth';
+  timeElement.classList = 'is-size-3';
+  timeElement.innerText = convertSecond(600);
+  startBtn.classList = 'button is-success is-medium is-fullwidth';
   startBtn.innerText = 'Start';
-  finishBtn.classList = 'button is-medium is-fullwidth';
+  finishBtn.classList = 'button is-danger is-medium is-fullwidth';
   finishBtn.innerText = 'Finish';
+  finishBtn.addEventListener('click', finishGame);
 
   timeColumn.appendChild(timeElement);
   startColumn.appendChild(startBtn);
@@ -463,11 +491,67 @@ function addCourtHeroFoot() {
 
   return courtHeroFoot;
 }
+function timeCountDown(milliseconds) {}
+function convertSecond(sec) {
+  let minutes = Math.floor(sec / 60);
+  let seconds = sec % 60;
+  return minutes + ':' + seconds;
+}
+
 function removeAllChild(parentid) {
   let parentElement = document.getElementById(parentid);
   while (parentElement.firstChild) {
     parentElement.removeChild(parentElement.lastChild);
   }
+}
+function finishGame(event) {
+  deleteCourt(event);
+  playerOnCourtHighlight();
+  courtNumberUpdate();
+  matchNumber();
+}
+function deleteCourt(event) {
+  const confirmDelete = confirm('Do you want to finish this game?'),
+    courtTile = document.getElementById('courtTile');
+  if (confirmDelete === true) {
+    const button = event.target,
+      tileParent = button.closest('#courtTile > div'),
+      tileParentId = tileParent.id;
+    let court = document.getElementById(tileParentId),
+      selectedMatch = getSelectedMatch(tileParentId),
+      tempPlayerList = [
+        selectedMatch[0][0]['name'],
+        selectedMatch[0][1]['name'],
+        selectedMatch[1][0]['name'],
+        selectedMatch[1][1]['name'],
+      ];
+
+    if (courtTile.childElementCount > 1) {
+      for (let i = 0; i < memberObject.length; i++) {
+        for (let j = 0; j < tempPlayerList.length; j++) {
+          if (memberObject[i]['name'] === tempPlayerList[j]) {
+            memberObject[i]['oncourt'] = false;
+          }
+        }
+      }
+      setMemberStorage(memberObject);
+      court.remove();
+
+      for (let i = 0; i < matchList.length; i++) {
+        if (Number(matchList[i][2]) === Number(tileParentId)) {
+          matchList.splice(i, 1);
+        }
+      }
+      addCourt();
+    } else {
+      return;
+    }
+  }
+}
+function courtNumberUpdate() {
+  const courtTile = document.getElementById('courtTile').childElementCount;
+  let courtNumber = document.getElementById('courtNumber');
+  courtNumber.innerText = courtTile;
 }
 
 // Localstorage
@@ -503,8 +587,8 @@ function setMatchListStorage(list) {
 }
 
 function getObject(object) {
-  let lStorageObject = lStorage.getItem(object);
-  parsedObj = JSON.parse(lStorageObject);
+  let lStorageObject = lStorage.getItem(object),
+    parsedObj = JSON.parse(lStorageObject);
   return parsedObj;
 }
 
