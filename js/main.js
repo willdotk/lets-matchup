@@ -8,7 +8,7 @@ let memberList = new Array(),
   members = document.getElementById('members'),
   memberObject = getObject('members'),
   tileAncestor = document.getElementById('courtTile'),
-  teamMatchTolerance = 0.2;
+  teamMatchTolerance = 0.1;
 
 // General element creation
 function divElement() {
@@ -169,7 +169,9 @@ function matchNumber() {
 function getTeamList(playerlist) {
   let sList = shuffle(playerlist);
   do {
-    addTeamToList(sList);
+    for (let i = 0; i < playerlist.length; i++) {
+      addTeamToList(sList);
+    }
     teamMatchTolerance += 0.1;
   } while (totalTeamList.length < teamNumber());
   return totalTeamList;
