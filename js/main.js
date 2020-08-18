@@ -1,4 +1,4 @@
-'use strict';
+// 'use strict';
 
 let memberList = new Array(),
   playerList = new Array(),
@@ -8,7 +8,9 @@ let memberList = new Array(),
   members = document.getElementById('members'),
   memberObject = getObject('members'),
   tileAncestor = document.getElementById('courtTile'),
-  teamMatchTolerance = 0.1;
+  teamMatchTolerance = 0.1,
+  playMinute = 0.1,
+  playSecond = playMinute * 60;
 
 // General element creation
 function divElement() {
@@ -430,9 +432,18 @@ function addCourtHero(firstTeam, secondTeam) {
   return courtHero;
 }
 function addCourtHeroHead() {
-  let courtHeroHead = divElement();
-  courtHeroHead.classList = 'hero-head is-size-3';
-  courtHeroHead.innerText = 'Court Number';
+  let courtHeroHead = divElement(),
+    courtHeadLabel = pElement(),
+    courtHeadNumber = pElement();
+
+  courtHeroHead.classList = 'hero-head';
+  courtHeadLabel.classList = 'label is-size-4';
+  courtHeadLabel.innerText = 'Court Number';
+  courtHeadNumber.classList = 'courtnumber is-size-4';
+  courtHeadNumber.contentEditable = 'true';
+
+  courtHeroHead.appendChild(courtHeadLabel);
+  courtHeroHead.appendChild(courtHeadNumber);
   return courtHeroHead;
 }
 function addCourtHeroBody(firstTeam, secondTeam) {
@@ -476,9 +487,14 @@ function addCourtHeroFoot() {
   startColumn.classList = 'column';
   finishColumn.classList = 'column';
   timeElement.classList = 'is-size-3';
-  timeElement.innerText = convertSecond(600);
+  // timeElement.innerText = '10:00';
+  // timeElement.innerText =
+  //   Math.floor(playSecond / 60) +
+  //   ':' +
+  //   (playSecond % 60 < 10 ? `0${playSecond % 60}` : `${playSecond % 60}`);
   startBtn.classList = 'button is-success is-medium is-fullwidth';
   startBtn.innerText = 'Start';
+  // startBtn.addEventListener('click', startCountDown);
   finishBtn.classList = 'button is-danger is-medium is-fullwidth';
   finishBtn.innerText = 'Finish';
   finishBtn.addEventListener('click', finishGame);
@@ -493,61 +509,75 @@ function addCourtHeroFoot() {
 
   return courtHeroFoot;
 }
-function timeCountDown(milliseconds) {}
-function convertSecond(sec) {
-  let minutes = Math.floor(sec / 60);
-  let seconds = sec % 60;
-  return minutes + ':' + seconds;
+function startCountDown(event) {
+  setInterval(() => {
+    timeCountDown(event, playSecond);
+  }, 1000);
 }
-
+function timeCountDown(event, playsecond) {
+  let startButton = event.target,
+    column = startButton.closest('.columns').firstChild,
+    minutes = Math.floor(playsecond / 60),
+    seconds = playsecond % 60;
+  if (minutes <= 0 && seconds === 0) {
+    column.firstChild.innerText = '0:00';
+    return;
+  } else {
+    column.firstChild.innerText = `${minutes}:${
+      seconds < 10 ? `0${seconds}` : `${seconds}`
+    }`;
+    playSecond--;
+  }
+}
 function removeAllChild(parentid) {
   let parentElement = document.getElementById(parentid);
   while (parentElement.firstChild) {
     parentElement.removeChild(parentElement.lastChild);
   }
 }
+
 function finishGame(event) {
-  deleteCourt(event);
-  playerOnCourtHighlight();
-  courtNumberUpdate();
-  matchNumber();
+  const confirmDelete = confirm('Do you want to finish this game?');
+  if (confirmDelete === true) {
+    deleteCourt(event);
+    playerOnCourtHighlight();
+    courtNumberUpdate();
+    matchNumber();
+  }
 }
 function deleteCourt(event) {
-  const confirmDelete = confirm('Do you want to finish this game?'),
-    courtTile = document.getElementById('courtTile');
-  if (confirmDelete === true) {
-    const button = event.target,
-      tileParent = button.closest('#courtTile > div'),
-      tileParentId = tileParent.id;
-    let court = document.getElementById(tileParentId),
-      selectedMatch = getSelectedMatch(tileParentId),
-      tempPlayerList = [
-        selectedMatch[0][0]['name'],
-        selectedMatch[0][1]['name'],
-        selectedMatch[1][0]['name'],
-        selectedMatch[1][1]['name'],
-      ];
+  const courtTile = document.getElementById('courtTile');
+  const button = event.target,
+    tileParent = button.closest('#courtTile > div'),
+    tileParentId = tileParent.id;
+  let court = document.getElementById(tileParentId),
+    selectedMatch = getSelectedMatch(tileParentId),
+    tempPlayerList = [
+      selectedMatch[0][0]['name'],
+      selectedMatch[0][1]['name'],
+      selectedMatch[1][0]['name'],
+      selectedMatch[1][1]['name'],
+    ];
 
-    if (courtTile.childElementCount > 1) {
-      for (let i = 0; i < memberObject.length; i++) {
-        for (let j = 0; j < tempPlayerList.length; j++) {
-          if (memberObject[i]['name'] === tempPlayerList[j]) {
-            memberObject[i]['oncourt'] = false;
-          }
+  if (courtTile.childElementCount > 1) {
+    for (let i = 0; i < memberObject.length; i++) {
+      for (let j = 0; j < tempPlayerList.length; j++) {
+        if (memberObject[i]['name'] === tempPlayerList[j]) {
+          memberObject[i]['oncourt'] = false;
         }
       }
-      setMemberStorage(memberObject);
-      court.remove();
-
-      for (let i = 0; i < matchList.length; i++) {
-        if (Number(matchList[i][2]) === Number(tileParentId)) {
-          matchList.splice(i, 1);
-        }
-      }
-      addCourt();
-    } else {
-      return;
     }
+    setMemberStorage(memberObject);
+    court.remove();
+
+    for (let i = 0; i < matchList.length; i++) {
+      if (Number(matchList[i][2]) === Number(tileParentId)) {
+        matchList.splice(i, 1);
+      }
+    }
+    addCourt();
+  } else {
+    return;
   }
 }
 function courtNumberUpdate() {
@@ -581,8 +611,9 @@ function setMemberToStorage(name, level) {
 function setMemberStorage(list) {
   lStorage.setItem('members', JSON.stringify(list));
 }
-function setTeamListStorage(list) {
-  lStorage.setItem('teamlist', JSON.stringify(list));
+function setClubName() {
+  let clubname = document.getElementById('clubname').value;
+  lStorage.setItem('clubname', JSON.stringify(clubname));
 }
 function setMatchListStorage(list) {
   lStorage.setItem('matchlist', JSON.stringify(list));
@@ -602,6 +633,14 @@ function sortedObject(object) {
   }
   lst.sort();
   return lst;
+}
+function initClubName() {
+  let clubname = document.getElementById('clubname');
+  if (getObject('clubname')) {
+    clubname.value = getObject('clubname');
+  } else {
+    clubname.value = 'Enter your club name.';
+  }
 }
 function initMemberList() {
   for (let i = 0; i < sortedObject(memberObject).length; i++) {
@@ -666,6 +705,7 @@ function firstCourtInit() {
 }
 
 function init() {
+  initClubName();
   if (memberObject !== null) {
     initMemberList();
   } else {

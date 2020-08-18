@@ -18,14 +18,16 @@
     <nav class="navbar is-white">
       <div class="container">
         <div class="navbar-brand">
-          <p class="navbar-item brand-text is-size-3" contenteditable="true">
-            Enter your club name.
-          </p>
+          <input
+            id="clubname"
+            class="navbar-item brand-text is-size-3 clubname"
+            onchange="setClubName()"
+          />
         </div>
       </div>
     </nav>
     <!-- END NAV -->
-    <div class="container">
+    <div class="container maindashboard">
       <div class="columns">
         <div class="column is-3">
           <aside class="menu">
@@ -179,8 +181,7 @@
               </article>
             </div>
           </section>
-
-          <div class="columns">
+          <section class="columns">
             <div class="column">
               <section class="info-tiles">
                 <div
@@ -189,7 +190,16 @@
                 ></div>
               </section>
             </div>
-          </div>
+          </section>
+          <footer class="container">
+            <div class="wk-footer has-text-right">
+              <p>
+                Designed and developed by
+                <strong>willdotk</strong>
+              </p>
+              <p>willdotk@gmail.com</p>
+            </div>
+          </footer>
         </div>
       </div>
     </div>

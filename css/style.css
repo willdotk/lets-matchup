@@ -5,6 +5,26 @@
 .field-label {
   text-align: left;
 }
+.maindashboard {
+  margin-top: 1rem;
+}
+.wk-footer p {
+  margin-right: 0;
+}
+.clubname {
+  border-bottom: grey 1px solid;
+  border-top-style: hidden;
+  border-left-style: hidden;
+  border-right-style: hidden;
+  margin-block-start: 1rem;
+  margin-block-end: 0;
+}
+
+.courtnumber {
+  border: grey 1px solid;
+  margin-left: 40%;
+  margin-right: 40%;
+}
 
 .level-right.is-flex-mobile {
   justify-content: center;
