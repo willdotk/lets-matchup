@@ -9,7 +9,7 @@ let memberList = new Array(),
   memberObject = getObject('members'),
   tileAncestor = document.getElementById('courtTile'),
   teamMatchTolerance = 0.1,
-  playMinute = 0.1,
+  playMinute = 10,
   playSecond = playMinute * 60;
 
 // General element creation
@@ -456,7 +456,6 @@ function addCourtHeroBody(firstTeam, secondTeam) {
     secondTeamNode = document.createTextNode(secondTeam);
 
   courtHeroBody.classList = 'hero-body has-background-warning';
-
   addFirstTeamElement.classList = 'subtitle is-capitalized is-size-4';
   addVsElement.classList = 'subtitle is-size-6';
   addSecondTeamElement.classList = 'subtitle is-capitalized is-size-4';
@@ -473,32 +472,32 @@ function addCourtHeroFoot() {
   let courtHeroFoot = divElement(),
     columns = divElement(),
     timeColumn = divElement(),
+    presetTime = pElement(),
     startColumn = divElement(),
     finishColumn = divElement(),
     timeElement = pElement(),
     startBtn = document.createElement('button'),
     finishBtn = document.createElement('button');
+
   courtHeroFoot.classList = 'hero-foot';
   courtHeroFoot.style = 'margin: 0.5rem;';
-
   columns.classList = 'columns';
+  presetTime.innerText = playSecond;
+  presetTime.style = 'display: none;';
   timeColumn.classList = 'column';
   timeColumn.style = 'min-width: 7rem;';
   startColumn.classList = 'column';
   finishColumn.classList = 'column';
   timeElement.classList = 'is-size-3';
-  // timeElement.innerText = '10:00';
-  // timeElement.innerText =
-  //   Math.floor(playSecond / 60) +
-  //   ':' +
-  //   (playSecond % 60 < 10 ? `0${playSecond % 60}` : `${playSecond % 60}`);
+  timeElement.innerText = '10:00';
   startBtn.classList = 'button is-success is-medium is-fullwidth';
   startBtn.innerText = 'Start';
-  // startBtn.addEventListener('click', startCountDown);
+  startBtn.addEventListener('click', startCountDown);
   finishBtn.classList = 'button is-danger is-medium is-fullwidth';
   finishBtn.innerText = 'Finish';
   finishBtn.addEventListener('click', finishGame);
 
+  timeColumn.appendChild(presetTime);
   timeColumn.appendChild(timeElement);
   startColumn.appendChild(startBtn);
   finishColumn.appendChild(finishBtn);
@@ -511,24 +510,28 @@ function addCourtHeroFoot() {
 }
 function startCountDown(event) {
   setInterval(() => {
-    timeCountDown(event, playSecond);
+    timeCountDown(event);
   }, 1000);
 }
-function timeCountDown(event, playsecond) {
+function timeCountDown(event) {
   let startButton = event.target,
     column = startButton.closest('.columns').firstChild,
-    minutes = Math.floor(playsecond / 60),
-    seconds = playsecond % 60;
+    hiddenTime = Number(column.firstChild.innerText),
+    minutes = Math.floor(hiddenTime / 60),
+    seconds = hiddenTime % 60;
+
   if (minutes <= 0 && seconds === 0) {
-    column.firstChild.innerText = '0:00';
+    column.lastChild.innerText = '0:00';
     return;
   } else {
-    column.firstChild.innerText = `${minutes}:${
+    column.lastChild.innerText = `${minutes}:${
       seconds < 10 ? `0${seconds}` : `${seconds}`
     }`;
-    playSecond--;
+    column.firstChild.innerText = Number(hiddenTime) - 1;
+    hiddenTime--;
   }
 }
+
 function removeAllChild(parentid) {
   let parentElement = document.getElementById(parentid);
   while (parentElement.firstChild) {
@@ -709,7 +712,22 @@ function init() {
   if (memberObject !== null) {
     initMemberList();
   } else {
-    memberObject = new Array();
+    memberObject = [
+      { name: 'member1', level: '7', attend: true, oncourt: false },
+      { name: 'member2', level: '9', attend: false, oncourt: false },
+      { name: 'member3', level: '4', attend: true, oncourt: false },
+      { name: 'member4', level: '3', attend: false, oncourt: false },
+      { name: 'member5', level: '4', attend: true, oncourt: true },
+      { name: 'member6', level: '5', attend: true, oncourt: false },
+      { name: 'member7', level: '3', attend: true, oncourt: true },
+      { name: 'member8', level: '3', attend: true, oncourt: false },
+      { name: 'member9', level: '6', attend: true, oncourt: true },
+      { name: 'member10', level: '5', attend: true, oncourt: true },
+      { name: 'member11', level: '6', attend: true, oncourt: true },
+      { name: 'member12', level: '7', attend: true, oncourt: true },
+    ];
+    setMemberStorage(memberObject);
+    initMemberList();
   }
 }
 init();
