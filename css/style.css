@@ -60,7 +60,7 @@
 
 .slider:before {
   position: absolute;
-  content: '';
+  content: "";
   height: 1.3rem;
   width: 1.3rem;
   left: 0.2rem;
