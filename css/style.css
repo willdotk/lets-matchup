@@ -8,9 +8,6 @@
 .maindashboard {
   margin-top: 1rem;
 }
-.wk-footer p {
-  margin-right: 0;
-}
 .clubname {
   border-bottom: grey 1px solid;
   border-top-style: hidden;
@@ -25,9 +22,12 @@
   margin-left: 40%;
   margin-right: 40%;
 }
-
 .level-right.is-flex-mobile {
   justify-content: center;
+}
+.github {
+  margin-left: 1rem;
+  width: 2rem;
 }
 
 /* The switch - the box around the slider */
@@ -60,7 +60,7 @@
 
 .slider:before {
   position: absolute;
-  content: "";
+  content: '';
   height: 1.3rem;
   width: 1.3rem;
   left: 0.2rem;

@@ -477,7 +477,9 @@ function addCourtHeroFoot() {
     finishColumn = divElement(),
     timeElement = pElement(),
     startBtn = document.createElement('button'),
-    finishBtn = document.createElement('button');
+    finishBtn = document.createElement('button'),
+    minutes = Math.floor(playSecond / 60),
+    seconds = playSecond % 60;
 
   courtHeroFoot.classList = 'hero-foot';
   courtHeroFoot.style = 'margin: 0.5rem;';
@@ -489,7 +491,9 @@ function addCourtHeroFoot() {
   startColumn.classList = 'column';
   finishColumn.classList = 'column';
   timeElement.classList = 'is-size-3';
-  timeElement.innerText = '10:00';
+  timeElement.innerText = `${minutes}:${
+    seconds < 10 ? `0${seconds}` : `${seconds}`
+  }`;
   startBtn.classList = 'button is-success is-medium is-fullwidth';
   startBtn.innerText = 'Start';
   startBtn.addEventListener('click', startCountDown);
@@ -522,7 +526,6 @@ function timeCountDown(event) {
 
   if (minutes <= 0 && seconds === 0) {
     column.lastChild.innerText = '0:00';
-    return;
   } else {
     column.lastChild.innerText = `${minutes}:${
       seconds < 10 ? `0${seconds}` : `${seconds}`
