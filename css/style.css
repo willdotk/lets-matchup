@@ -103,6 +103,13 @@ input:checked + .slider:before {
   padding: 0;
 }
 
+@media screen and (max-width: 768px) {
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
 .grid-arrow {
   display: grid;
   grid-template-rows: 1fr 0.5fr 1fr;
