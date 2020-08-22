@@ -17,6 +17,12 @@
   margin-block-end: 0;
 }
 
+@media screen and (max-width: 768px) {
+  .clubname {
+    max-width: 10em;
+  }
+}
+
 .courtnumber {
   border: grey 1px solid;
   margin-left: 40%;
