@@ -9,7 +9,7 @@ let memberList = new Array(),
   memberObject = getObject('members'),
   tileAncestor = document.getElementById('courtTile'),
   teamMatchTolerance = 0.1,
-  playMinute = 0.05,
+  playMinute = 10,
   playSecond = playMinute * 60;
 
 // General element creation
