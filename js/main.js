@@ -9,7 +9,7 @@ let memberList = new Array(),
   memberObject = getObject('members'),
   tileAncestor = document.getElementById('courtTile'),
   teamMatchTolerance = 0.1,
-  playMinute = 10,
+  playMinute = 0.05,
   playSecond = playMinute * 60;
 
 // General element creation
@@ -512,6 +512,7 @@ function addCourtHeroFoot() {
 
   return courtHeroFoot;
 }
+
 function startCountDown(event) {
   setInterval(() => {
     timeCountDown(event);
@@ -524,8 +525,9 @@ function timeCountDown(event) {
     minutes = Math.floor(hiddenTime / 60),
     seconds = hiddenTime % 60;
 
-  if (minutes <= 0 && seconds === 0) {
+  if (hiddenTime === 0) {
     column.lastChild.innerText = '0:00';
+    beepEffect();
   } else {
     column.lastChild.innerText = `${minutes}:${
       seconds < 10 ? `0${seconds}` : `${seconds}`
@@ -590,6 +592,11 @@ function courtNumberUpdate() {
   const courtTile = document.getElementById('courtTile').childElementCount;
   let courtNumber = document.getElementById('courtNumber');
   courtNumber.innerText = courtTile;
+}
+function beepEffect() {
+  let beep = new Audio();
+  beep.src = 'media/beep.mp3';
+  beep.play();
 }
 
 // Localstorage
@@ -675,6 +682,7 @@ function initPlayerList() {
   teamListDisplay();
   playerOncourtInit();
   firstCourtInit();
+  playerOnCourtHighlight();
 }
 function playerOncourtInit() {
   for (let i = 0; i < memberObject.length; i++) {
