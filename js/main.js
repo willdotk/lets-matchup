@@ -527,7 +527,6 @@ function timeCountDown(event) {
 
   if (hiddenTime === 0) {
     column.lastChild.innerText = '0:00';
-    beepEffect();
   } else {
     column.lastChild.innerText = `${minutes}:${
       seconds < 10 ? `0${seconds}` : `${seconds}`
