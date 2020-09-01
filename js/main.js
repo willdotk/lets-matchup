@@ -7,7 +7,7 @@ let memberList = new Array(),
   lStorage = window.localStorage,
   members = document.getElementById('members'),
   memberObject = getObject('members'),
-  tileAncestor = document.getElementById('courtTile'),
+  courtField = document.getElementById('courtTile'),
   teamMatchTolerance = 0.1,
   playMinute = 10,
   playSecond = playMinute * 60;
@@ -168,34 +168,51 @@ function matchNumber() {
 }
 
 // Match up team members
+function verifyTeamLevel(playerAverage) {
+  let lastElementIndex = totalTeamList.length - 1,
+    calc =
+      Number(getTeamAverage(totalTeamList[lastElementIndex])) +
+      Number(teamMatchTolerance);
+  if (calc <= playerAverage) {
+    location.reload();
+  }
+}
+function getTeamAverage(list) {
+  return (Number(list[0]['level']) + Number(list[1]['level'])) / 2;
+}
 function getTeamList(playerlist) {
   let sList = shuffle(playerlist);
   do {
     for (let i = 0; i < playerlist.length; i++) {
       addTeamToList(sList);
     }
-    teamMatchTolerance += 0.1;
+    teamMatchTolerance += 0.05;
   } while (totalTeamList.length < teamNumber());
+  verifyTeamLevel(getPlayerLevelAverage(getPlayerList()));
   return totalTeamList;
 }
+
 function addTeamToList(playerlist) {
   let playerAverage = getPlayerLevelAverage(playerlist);
-  if (teamUp(playerlist, playerAverage)) {
-    totalTeamList.push(teamUp(playerlist, playerAverage));
-  }
-  if (totalTeamList) {
-    for (let i = 0; i < totalTeamList.length; i++) {
-      for (let j = 0; j < playerlist.length; j++) {
-        totalTeamList[i].forEach((element) => {
-          if (element['name'] === playerlist[j]['name']) {
-            playerlist.splice(j, 1);
-          }
-        });
+  for (let k = 0; k < playerlist.length; k++) {
+    let upTeam = teamUp(playerlist, playerAverage);
+    if (teamUp(playerlist, playerAverage)) {
+      totalTeamList.push(upTeam);
+      for (let i = 0; i < totalTeamList.length; i++) {
+        for (let j = 0; j < playerlist.length; j++) {
+          totalTeamList[i].forEach((element) => {
+            if (element['name'] === playerlist[j]['name']) {
+              playerlist.splice(j, 1);
+            }
+          });
+        }
       }
+    } else {
+      playerlist.push(playerlist.shift());
     }
   }
-  return totalTeamList;
 }
+
 function teamUp(list, playerAverage) {
   if (list.length > 1) {
     for (let i = 1; i < list.length; i++) {
@@ -243,6 +260,10 @@ function teamListDisplay() {
   getTeamList(getPlayerList());
   for (let i = 0; i < totalTeamList.length; i++) {
     let teamNameElement = pElement(),
+      teamAverage =
+        (Number(totalTeamList[i][0]['level']) +
+          Number(totalTeamList[i][1]['level'])) /
+        2,
       teamName =
         totalTeamList[i][0]['name'] + ' & ' + totalTeamList[i][1]['name'],
       teamNameNode = document.createTextNode(teamName);
@@ -380,8 +401,8 @@ function addCourt() {
   }
 }
 function extractCourt() {
-  let courtTile = document.getElementById('courtTile'),
-    courtTileLast = courtTile.lastChild,
+  let courtField = document.getElementById('courtTile'),
+    courtTileLast = courtField.lastChild,
     selectedMatch = getSelectedMatch(courtTileLast.id),
     tempPlayerList = [
       selectedMatch[0][0]['name'],
@@ -390,8 +411,8 @@ function extractCourt() {
       selectedMatch[1][1]['name'],
     ];
 
-  if (courtTile.childElementCount > 1) {
-    courtTile.removeChild(courtTile.lastChild);
+  if (courtField.childElementCount > 1) {
+    courtField.removeChild(courtField.lastChild);
     for (let i = 0; i < memberObject.length; i++) {
       for (let j = 0; j < tempPlayerList.length; j++) {
         if (memberObject[i]['name'] === tempPlayerList[j]) {
@@ -404,28 +425,23 @@ function extractCourt() {
     return;
   }
 }
-
 function arrangeTeamOnCourt(firstTeam, secondTeam, matchlistindex) {
-  let addTileParent = divElement(),
-    addTileChild = document.createElement('article'),
+  let addCourt = document.createElement('article'),
     courtHero = addCourtHero(firstTeam, secondTeam);
 
-  addTileChild.classList = 'tile is-child box';
-  addTileChild.style = 'padding: 0;';
-  addTileParent.classList = 'tile is-parent';
-
-  addTileChild.appendChild(courtHero);
-  addTileParent.appendChild(addTileChild);
-  addTileParent.id = matchlistindex;
-  tileAncestor.appendChild(addTileParent);
+  addCourt.appendChild(courtHero);
+  addCourt.id = matchlistindex;
+  courtField.appendChild(addCourt);
   matchNumber();
 }
+
 function addCourtHero(firstTeam, secondTeam) {
   let courtHero = divElement(),
     courtHeroHead = addCourtHeroHead(),
     courtHeroBody = addCourtHeroBody(firstTeam, secondTeam),
     courtHeroFoot = addCourtHeroFoot();
-  courtHero.classList = 'hero';
+  courtHero.classList = 'hero has-text-centered box';
+  courtHero.style = 'margin: 0.5rem; padding: 0';
   courtHero.appendChild(courtHeroHead);
   courtHero.appendChild(courtHeroBody);
   courtHero.appendChild(courtHeroFoot);
@@ -555,7 +571,7 @@ function finishGame(event) {
 function deleteCourt(event) {
   const courtTile = document.getElementById('courtTile');
   const button = event.target,
-    tileParent = button.closest('#courtTile > div'),
+    tileParent = button.closest('#courtTile > article'),
     tileParentId = tileParent.id;
   let court = document.getElementById(tileParentId),
     selectedMatch = getSelectedMatch(tileParentId),

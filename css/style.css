@@ -104,6 +104,11 @@ input:checked + .slider:before {
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
 }
 
+.court-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
 .grid > p {
   margin: 0.5rem;
   padding: 0;
@@ -113,6 +118,20 @@ input:checked + .slider:before {
   .grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@media screen and (max-width: 1023px) {
+  .court-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1600px) {
+  .court-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 }
 
