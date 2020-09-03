@@ -530,26 +530,30 @@ function addCourtHeroFoot() {
 }
 
 function startCountDown(event) {
-  setInterval(() => {
-    timeCountDown(event);
-  }, 1000);
-}
-function timeCountDown(event) {
   let startButton = event.target,
     column = startButton.closest('.columns').firstChild,
-    hiddenTime = Number(column.firstChild.innerText),
-    minutes = Math.floor(hiddenTime / 60),
-    seconds = hiddenTime % 60;
+    hiddenTime = Number(column.firstChild.innerText);
 
-  if (hiddenTime === 0) {
-    column.lastChild.innerText = '0:00';
-  } else {
-    column.lastChild.innerText = `${minutes}:${
-      seconds < 10 ? `0${seconds}` : `${seconds}`
-    }`;
-    column.firstChild.innerText = Number(hiddenTime) - 1;
-    hiddenTime--;
-  }
+  let timerInterval = setInterval(() => {
+    if (hiddenTime === 0) {
+      column.lastChild.innerText = '0:00';
+      clearInterval(timerInterval);
+      beepEffect();
+      deleteCourt(event);
+      playerOnCourtHighlight();
+      courtNumberUpdate();
+      matchNumber();
+    } else {
+      let minutes = Math.floor(hiddenTime / 60),
+        seconds = hiddenTime % 60;
+      column.lastChild.innerText = `${minutes}:${
+        seconds < 10 ? `0${seconds}` : `${seconds}`
+      }`;
+      column.firstChild.innerText = Number(hiddenTime) - 1;
+      hiddenTime--;
+      console.log(column.lastChild.innerText);
+    }
+  }, 1000);
 }
 
 function removeAllChild(parentid) {
