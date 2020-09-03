@@ -169,12 +169,11 @@ function matchNumber() {
 
 // Match up team members
 function verifyTeamLevel(playerAverage) {
-  let lastElementIndex = totalTeamList.length - 1,
-    calc =
-      Number(getTeamAverage(totalTeamList[lastElementIndex])) +
-      Number(teamMatchTolerance);
-  if (calc <= playerAverage) {
-    location.reload();
+  for (let i = 0; i < totalTeamList.length; i++) {
+    let calc = getTeamAverage(totalTeamList[i]) + Number(teamMatchTolerance);
+    if (calc <= playerAverage) {
+      location.reload();
+    }
   }
 }
 function getTeamAverage(list) {
@@ -196,7 +195,7 @@ function addTeamToList(playerlist) {
   let playerAverage = getPlayerLevelAverage(playerlist);
   for (let k = 0; k < playerlist.length; k++) {
     let upTeam = teamUp(playerlist, playerAverage);
-    if (teamUp(playerlist, playerAverage)) {
+    if (upTeam) {
       totalTeamList.push(upTeam);
       for (let i = 0; i < totalTeamList.length; i++) {
         for (let j = 0; j < playerlist.length; j++) {
@@ -207,8 +206,6 @@ function addTeamToList(playerlist) {
           });
         }
       }
-    } else {
-      playerlist.push(playerlist.shift());
     }
   }
 }
@@ -265,7 +262,11 @@ function teamListDisplay() {
           Number(totalTeamList[i][1]['level'])) /
         2,
       teamName =
-        totalTeamList[i][0]['name'] + ' & ' + totalTeamList[i][1]['name'],
+        totalTeamList[i][0]['name'] +
+        ' & ' +
+        totalTeamList[i][1]['name'] +
+        '  ' +
+        teamAverage,
       teamNameNode = document.createTextNode(teamName);
     teamNameElement.classList = 'is-size-5 is-capitalized';
     teamNameElement.appendChild(teamNameNode);
@@ -647,8 +648,8 @@ function setClubName() {
   let clubname = document.getElementById('clubname').value;
   lStorage.setItem('clubname', JSON.stringify(clubname));
 }
-function setMatchListStorage(list) {
-  lStorage.setItem('matchlist', JSON.stringify(list));
+function setTeamList(list) {
+  lStorage.setItem('teamlist', JSON.stringify(list));
 }
 
 function getObject(object) {
