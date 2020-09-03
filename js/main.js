@@ -6,6 +6,7 @@ let memberList = new Array(),
   matchList = new Array(),
   lStorage = window.localStorage,
   members = document.getElementById('members'),
+  // totalTeamList = getObject('teamlist'),
   memberObject = getObject('members'),
   courtField = document.getElementById('courtTile'),
   teamMatchTolerance = 0.1,
@@ -197,6 +198,7 @@ function addTeamToList(playerlist) {
     let upTeam = teamUp(playerlist, playerAverage);
     if (upTeam) {
       totalTeamList.push(upTeam);
+      // setTeamList(totalTeamList);
       for (let i = 0; i < totalTeamList.length; i++) {
         for (let j = 0; j < playerlist.length; j++) {
           totalTeamList[i].forEach((element) => {
@@ -209,7 +211,6 @@ function addTeamToList(playerlist) {
     }
   }
 }
-
 function teamUp(list, playerAverage) {
   if (list.length > 1) {
     for (let i = 1; i < list.length; i++) {
@@ -225,6 +226,17 @@ function teamUp(list, playerAverage) {
     }
   }
 }
+
+function getTeamListFromLocalstorage() {
+  let playerList = new Array();
+  for (let i = 0; i < memberObject.length; i++) {
+    if (memberObject[i]['attend'] === true) {
+      playerList.push(memberObject[i]);
+    }
+  }
+  return playerList;
+}
+
 function getPlayerList() {
   let playerList = new Array();
   for (let i = 0; i < memberObject.length; i++) {
@@ -262,11 +274,7 @@ function teamListDisplay() {
           Number(totalTeamList[i][1]['level'])) /
         2,
       teamName =
-        totalTeamList[i][0]['name'] +
-        ' & ' +
-        totalTeamList[i][1]['name'] +
-        '  ' +
-        teamAverage,
+        totalTeamList[i][0]['name'] + ' & ' + totalTeamList[i][1]['name'],
       teamNameNode = document.createTextNode(teamName);
     teamNameElement.classList = 'is-size-5 is-capitalized';
     teamNameElement.appendChild(teamNameNode);
