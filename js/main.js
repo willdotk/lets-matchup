@@ -249,24 +249,8 @@ function teamUp(list, playerAverage) {
     }
   }
 }
-<<<<<<< HEAD
-
-function getTeamListFromLocalstorage() {
-  let playerList = new Array();
-  for (let i = 0; i < memberObject.length; i++) {
-    if (memberObject[i]['attend'] === true) {
-      playerList.push(memberObject[i]);
-    }
-  }
-  return playerList;
-}
-
-function getPlayerList() {
-  let playerList = new Array();
-=======
 function setPlayerList() {
   pList = [];
->>>>>>> develop
   for (let i = 0; i < memberObject.length; i++) {
     if (memberObject[i]['attend'] === true) {
       pList.push(memberObject[i]);
