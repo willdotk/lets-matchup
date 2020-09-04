@@ -158,8 +158,9 @@
               </article>
             </div>
             <div class="tile is-parent">
-              <article id="teamList" class="tile is-child box">
+              <article class="tile is-child box">
                 <p class="title">Team List</p>
+                <div id="teamList"></div>
               </article>
             </div>
           </section>
@@ -204,7 +205,7 @@
                 <button
                   style="margin: 2rem"
                   class="button is-info is-outlined is-medium"
-                  onclick="location.reload()"
+                  onclick="rearrangeTeam()"
                 >
                   Rearrange team
                 </button>
@@ -243,6 +244,5 @@
       </div>
     </div>
     <script src="js/main.js"></script>
-    <script src="js/modal.js"></script>
   </body>
 </html>
