@@ -1,9 +1,9 @@
 // 'use strict';
 
 let memberList = new Array(),
-  playerList = new Array(),
   totalTeamList = new Array(),
   matchList = new Array(),
+  pList = new Array(),
   lStorage = window.localStorage,
   members = document.getElementById('members'),
   memberObject = getObject('members'),
@@ -125,6 +125,7 @@ function attendanceCheck(event) {
       }
     }
   }
+  setPlayerList();
   setMemberStorage(memberObject);
   playerNumber();
   teamNumber();
@@ -168,40 +169,62 @@ function matchNumber() {
 }
 
 // Match up team members
+function rearrangeTeam() {
+  let teamListElement = document.getElementById('teamList'),
+    benchplayer = document.getElementById('playerOnBench');
+
+  while (teamListElement.firstChild) {
+    teamListElement.removeChild(teamListElement.firstChild);
+  }
+  while (benchplayer.firstChild) {
+    benchplayer.removeChild(benchplayer.firstChild);
+  }
+
+  totalTeamList = [];
+  matchList = [];
+
+  initMemberList();
+}
+
 function verifyTeamLevel(playerAverage) {
   for (let i = 0; i < totalTeamList.length; i++) {
     let calc = getTeamAverage(totalTeamList[i]) + Number(teamMatchTolerance);
     if (calc <= playerAverage) {
-      location.reload();
+      const confirmDelete = confirm(
+        'There is a significant level gap between teams. \n Do you want to match up teams again?'
+      );
+      if (confirmDelete === true) {
+        location.reload();
+      }
     }
   }
 }
 function getTeamAverage(list) {
   return (Number(list[0]['level']) + Number(list[1]['level'])) / 2;
 }
-function getTeamList(playerlist) {
-  let sList = shuffle(playerlist);
+function getTeamList() {
+  let sList = shuffle(pList);
   do {
-    for (let i = 0; i < playerlist.length; i++) {
+    for (let i = 0; i < pList.length; i++) {
       addTeamToList(sList);
     }
     teamMatchTolerance += 0.05;
   } while (totalTeamList.length < teamNumber());
-  verifyTeamLevel(getPlayerLevelAverage(getPlayerList()));
+  verifyTeamLevel(getPlayerLevelAverage(pList));
   return totalTeamList;
 }
 
-function addTeamToList(playerlist) {
-  let playerAverage = getPlayerLevelAverage(playerlist);
-  for (let k = 0; k < playerlist.length; k++) {
-    let upTeam = teamUp(playerlist, playerAverage);
+function addTeamToList(pList) {
+  let playerAverage = getPlayerLevelAverage(pList);
+  for (let k = 0; k < pList.length; k++) {
+    let upTeam = teamUp(pList, playerAverage);
     if (upTeam) {
       totalTeamList.push(upTeam);
       for (let i = 0; i < totalTeamList.length; i++) {
-        for (let j = 0; j < playerlist.length; j++) {
+        for (let j = 0; j < pList.length; j++) {
           totalTeamList[i].forEach((element) => {
-            if (element['name'] === playerlist[j]['name']) {
-              playerlist.splice(j, 1);
+            if (element['name'] === pList[j]['name']) {
+              pList.splice(j, 1);
             }
           });
         }
@@ -225,21 +248,21 @@ function teamUp(list, playerAverage) {
     }
   }
 }
-function getPlayerList() {
-  let playerList = new Array();
+function setPlayerList() {
+  pList = [];
   for (let i = 0; i < memberObject.length; i++) {
     if (memberObject[i]['attend'] === true) {
-      playerList.push(memberObject[i]);
+      pList.push(memberObject[i]);
     }
   }
-  return playerList;
+  return pList;
 }
-function getPlayerLevelAverage(playerlist) {
+function getPlayerLevelAverage() {
   let totalLevel = 0;
-  for (let i = 0; i < playerlist.length; i++) {
-    totalLevel += Number(playerlist[i]['level']);
+  for (let i = 0; i < pList.length; i++) {
+    totalLevel += Number(pList[i]['level']);
   }
-  return totalLevel / playerlist.length;
+  return totalLevel / pList.length;
 }
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -254,19 +277,11 @@ function shuffle(array) {
 // Team list display
 function teamListDisplay() {
   const teamListElement = document.getElementById('teamList');
-  getTeamList(getPlayerList());
+  getTeamList();
   for (let i = 0; i < totalTeamList.length; i++) {
     let teamNameElement = pElement(),
-      teamAverage =
-        (Number(totalTeamList[i][0]['level']) +
-          Number(totalTeamList[i][1]['level'])) /
-        2,
       teamName =
-        totalTeamList[i][0]['name'] +
-        ' & ' +
-        totalTeamList[i][1]['name'] +
-        '  ' +
-        teamAverage,
+        totalTeamList[i][0]['name'] + ' & ' + totalTeamList[i][1]['name'],
       teamNameNode = document.createTextNode(teamName);
     teamNameElement.classList = 'is-size-5 is-capitalized';
     teamNameElement.appendChild(teamNameNode);
@@ -619,16 +634,48 @@ function beepEffect() {
   beep.play();
 }
 
-// Localstorage
+// modal
+function activeModal() {
+  let modal = document.getElementById('addMemberModal'),
+    modalContainer = document.querySelector('html'),
+    nameInput = document.getElementById('nameInput'),
+    levelInput = document.getElementById('levelInput');
+  nameInput.value = '';
+  levelInput.value = '';
+  modal.classList.add('is-active');
+  modalContainer.classList.add('is-clipped');
+}
+function deactiveModal() {
+  let modal = document.getElementById('addMemberModal'),
+    modalContainer = document.querySelector('html');
+  modal.classList.remove('is-active');
+  modalContainer.classList.remove('is-clipped');
+}
+function getNameInput() {
+  let nameInput = document.getElementById('nameInput').value;
+  return nameInput;
+}
+function getLevelInput() {
+  let levelInput = document.getElementById('levelInput').value;
+  return levelInput;
+}
 function checkExistingMemberName(name) {
   for (let i = 0; i < sortedObject(memberObject).length; i++) {
     if (name === memberObject[i]['name']) {
       return true;
-    } else {
-      return false;
     }
   }
 }
+function addBtn() {
+  if (checkExistingMemberName(getNameInput()) === true) {
+    alert('Same named member exist \n' + 'Please use another name');
+  } else {
+    setMemberToStorage(getNameInput(), getLevelInput());
+    deactiveModal();
+  }
+}
+
+// Localstorage
 function setMemberToStorage(name, level) {
   let memberObj = new Object();
   memberObj.name = name.toLowerCase();
@@ -648,10 +695,6 @@ function setClubName() {
   let clubname = document.getElementById('clubname').value;
   lStorage.setItem('clubname', JSON.stringify(clubname));
 }
-function setTeamList(list) {
-  lStorage.setItem('teamlist', JSON.stringify(list));
-}
-
 function getObject(object) {
   let lStorageObject = lStorage.getItem(object),
     parsedObj = JSON.parse(lStorageObject);
@@ -685,6 +728,7 @@ function initPlayerList() {
   const getGridDiv = document.getElementById('playerOnBench');
   for (let i = 0; i < memberObject.length; i++) {
     if (memberObject[i]['attend'] === true) {
+      pList.push(memberObject[i]);
       let name = memberObject[i]['name'],
         inputId = name + 'OnOff',
         inputElement = document.getElementById(inputId),
@@ -716,26 +760,28 @@ function initCourtTile(firstTeam, secondTeam) {
 }
 function firstCourtInit() {
   // matchList[nth match][nth team(0 or 1)][nth person(0 or 1)]['name']
-  let firstTeamName =
-      matchList[0][0][0]['name'] + ' & ' + matchList[0][0][1]['name'],
-    secondTeamName =
-      matchList[0][1][0]['name'] + ' & ' + matchList[0][1][1]['name'],
-    tempPlayerList = [
-      matchList[0][0][0]['name'],
-      matchList[0][0][1]['name'],
-      matchList[0][1][0]['name'],
-      matchList[0][1][1]['name'],
-    ];
+  if (matchList.length !== 0) {
+    let firstTeamName =
+        matchList[0][0][0]['name'] + ' & ' + matchList[0][0][1]['name'],
+      secondTeamName =
+        matchList[0][1][0]['name'] + ' & ' + matchList[0][1][1]['name'],
+      tempPlayerList = [
+        matchList[0][0][0]['name'],
+        matchList[0][0][1]['name'],
+        matchList[0][1][0]['name'],
+        matchList[0][1][1]['name'],
+      ];
 
-  for (let i = 0; i < memberObject.length; i++) {
-    for (let j = 0; j < tempPlayerList.length; j++) {
-      if (memberObject[i]['name'] === tempPlayerList[j]) {
-        memberObject[i]['oncourt'] = true;
+    for (let i = 0; i < memberObject.length; i++) {
+      for (let j = 0; j < tempPlayerList.length; j++) {
+        if (memberObject[i]['name'] === tempPlayerList[j]) {
+          memberObject[i]['oncourt'] = true;
+        }
       }
     }
+    setMemberStorage(memberObject);
+    initCourtTile(firstTeamName, secondTeamName);
   }
-  setMemberStorage(memberObject);
-  initCourtTile(firstTeamName, secondTeamName);
 }
 
 function init() {
