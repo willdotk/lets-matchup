@@ -162,113 +162,114 @@
         </div>
         <ul id="members" class="menu-list is-capitalized memberlistgrid"></ul>
       </aside>
-
-      <section class="hero is-info is-mobile">
-        <div class="hero-body">
-          <div class="container">
-            <h1 class="title">Hello Team.</h1>
-            <div id="playerOnBench" class="grid"></div>
+      <div id="dashboard">
+        <section class="hero is-info is-mobile">
+          <div class="hero-body">
+            <div class="container">
+              <h1 class="title">Hello Team.</h1>
+              <div id="playerOnBench" class="grid"></div>
+            </div>
           </div>
-        </div>
-      </section>
-      <section class="tile is-ancestor has-text-centered">
-        <div class="tile is-parent is-vertical">
-          <article class="tile is-child box">
-            <p id="playerNumber" class="title">0</p>
-            <p class="subtitle">Players</p>
-          </article>
-          <article class="tile is-child box">
-            <p id="teamNumber" class="title">0</p>
-            <p class="subtitle">Teams</p>
-          </article>
-          <article class="tile is-child box">
-            <p id="matchNumber" class="title">0</p>
-            <p class="subtitle">Matches</p>
-          </article>
-        </div>
-        <div class="tile is-parent">
-          <article class="tile is-child box">
-            <p class="title">Team List</p>
-            <div id="teamList"></div>
-          </article>
-        </div>
-      </section>
-      <br />
-      <section class="tile is-ancestor has-text-centered">
-        <div class="tile is-parent has-vcentered">
-          <article class="tile is-child">
-            <p class="title" style="margin: 2rem">Play Courts</p>
-          </article>
-          <article class="tile is-child">
-            <div class="columns has-vcentered">
-              <div class="column is-three-fifths">
-                <p class="subtitle">No. of Courts</p>
-                <p id="courtNumber" class="title">1</p>
+        </section>
+        <section class="tile is-ancestor has-text-centered">
+          <div class="tile is-parent is-vertical">
+            <article class="tile is-child box">
+              <p id="playerNumber" class="title">0</p>
+              <p class="subtitle">Players</p>
+            </article>
+            <article class="tile is-child box">
+              <p id="teamNumber" class="title">0</p>
+              <p class="subtitle">Teams</p>
+            </article>
+            <article class="tile is-child box">
+              <p id="matchNumber" class="title">0</p>
+              <p class="subtitle">Matches</p>
+            </article>
+          </div>
+          <div class="tile is-parent">
+            <article class="tile is-child box">
+              <p class="title">Team List</p>
+              <div id="teamList"></div>
+            </article>
+          </div>
+        </section>
+        <br />
+        <section class="tile is-ancestor has-text-centered">
+          <div class="tile is-parent has-vcentered">
+            <article class="tile is-child">
+              <p class="title" style="margin: 2rem">Play Courts</p>
+            </article>
+            <article class="tile is-child">
+              <div class="columns has-vcentered">
+                <div class="column is-three-fifths">
+                  <p class="subtitle">No. of Courts</p>
+                  <p id="courtNumber" class="title">1</p>
+                </div>
+                <div class="column">
+                  <div class="grid-arrow">
+                    <span>
+                      <img
+                        id="upArrow"
+                        class="button"
+                        src="img/arrow-circle-up.svg"
+                        alt="up arrow"
+                        onclick="upArrow()"
+                      />
+                    </span>
+                    <span><br /></span>
+                    <span>
+                      <img
+                        id="downArrow"
+                        class="button"
+                        src="img/arrow-circle-down.svg"
+                        alt="down arrow"
+                        onclick="downArrow()"
+                      />
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div class="column">
-                <div class="grid-arrow">
-                  <span>
-                    <img
-                      id="upArrow"
-                      class="button"
-                      src="img/arrow-circle-up.svg"
-                      alt="up arrow"
-                      onclick="upArrow()"
-                    />
-                  </span>
-                  <span><br /></span>
-                  <span>
-                    <img
-                      id="downArrow"
-                      class="button"
-                      src="img/arrow-circle-down.svg"
-                      alt="down arrow"
-                      onclick="downArrow()"
-                    />
-                  </span>
+            </article>
+            <article class="tile is-child">
+              <button
+                style="margin: 2rem"
+                class="button is-info is-outlined is-medium"
+                onclick="rearrangeTeam()"
+              >
+                Rearrange team
+              </button>
+            </article>
+          </div>
+        </section>
+        <section class="columns">
+          <div class="column">
+            <section class="info-tiles">
+              <div id="courtTile" class="court-grid"></div>
+            </section>
+          </div>
+        </section>
+        <footer class="container">
+          <div class="level">
+            <div class="level-left"></div>
+            <div class="level-right">
+              <div class="level-item">
+                <p>
+                  designed and developed by
+                  <strong>willdotk</strong>
+                </p>
+              </div>
+              <div class="level-item">
+                <p>willdotk@gmail.com</p>
+                <div class="icon github" style="cursor: pointer">
+                  <a href="https://github.com/willdotk/lets-matchup">
+                    <img src="img/github.svg" alt="github" width="150" />
+                  </a>
                 </div>
               </div>
             </div>
-          </article>
-          <article class="tile is-child">
-            <button
-              style="margin: 2rem"
-              class="button is-info is-outlined is-medium"
-              onclick="rearrangeTeam()"
-            >
-              Rearrange team
-            </button>
-          </article>
-        </div>
-      </section>
-      <section class="columns">
-        <div class="column">
-          <section class="info-tiles">
-            <div id="courtTile" class="court-grid"></div>
-          </section>
-        </div>
-      </section>
-      <footer class="container">
-        <div class="level">
-          <div class="level-left"></div>
-          <div class="level-right">
-            <div class="level-item">
-              <p>
-                designed and developed by
-                <strong>willdotk</strong>
-              </p>
-            </div>
-            <div class="level-item">
-              <p>willdotk@gmail.com</p>
-              <div class="icon github" style="cursor: pointer">
-                <a href="https://github.com/willdotk/lets-matchup">
-                  <img src="img/github.svg" alt="github" width="150" />
-                </a>
-              </div>
-            </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
     <script src="js/main.js"></script>
   </body>

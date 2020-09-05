@@ -634,8 +634,10 @@ function beepEffect() {
 // modal
 
 function toggleMemberList() {
-  let memberListElement = document.getElementById('memberlist');
+  let memberListElement = document.getElementById('memberlist'),
+    dashboardElement = document.getElementById('dashboard');
   memberListElement.classList.toggle('memberlist');
+  dashboardElement.classList.toggle('memberlist');
   memberButton();
 }
 
