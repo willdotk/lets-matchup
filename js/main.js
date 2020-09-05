@@ -316,9 +316,26 @@ function playerHighlight() {
     }
   }
 }
+function playerNotInTeam() {
+  if (pList) {
+    for (let i = 0; i < pList.length; i++) {
+      let name = pList[i]['name'],
+        playerId = name + 'Player',
+        playerElement = document.getElementById(playerId);
+      if (playerElement) {
+        playerElement.classList = 'button is-capitalized is-info is-outlined';
+        playerElement.style =
+          'color: hsl(0, 0%, 71%); border-color: hsl(0, 0%, 71%)';
+        // playerElement.setAttribute('disabled type', 'button');
+      }
+    }
+  }
+}
+
 function playerOnCourtHighlight() {
   playerDeHighlight();
   playerHighlight();
+  playerNotInTeam();
 }
 
 // Court
