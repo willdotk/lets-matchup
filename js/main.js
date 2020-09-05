@@ -171,32 +171,24 @@ function matchNumber() {
 
 // Match up team members
 function rearrangeTeam() {
-  let teamListElement = document.getElementById('teamList'),
-    benchplayer = document.getElementById('playerOnBench');
+  removeAllChild('members');
+  removeAllChild('teamList');
+  removeAllChild('playerOnBench');
 
-  while (teamListElement.firstChild) {
-    teamListElement.removeChild(teamListElement.firstChild);
-  }
-  while (benchplayer.firstChild) {
-    benchplayer.removeChild(benchplayer.firstChild);
-  }
-
+  pList = [];
   totalTeamList = [];
   matchList = [];
 
-  initMemberList();
+  setTimeout(() => {
+    initMemberList();
+  }, 1);
 }
 
 function verifyTeamLevel(playerAverage) {
   for (let i = 0; i < totalTeamList.length; i++) {
     let calc = getTeamAverage(totalTeamList[i]) + Number(teamMatchTolerance);
     if (calc <= playerAverage) {
-      const confirmDelete = confirm(
-        'There is a significant level gap between teams. \n Do you want to match up teams again?'
-      );
-      if (confirmDelete === true) {
-        location.reload();
-      }
+      rearrangeTeam();
     }
   }
 }
@@ -301,8 +293,10 @@ function playerDeHighlight() {
       let name = memberObject[i]['name'],
         playerId = name + 'Player',
         playerElement = document.getElementById(playerId);
-      playerElement.classList =
-        'button is-capitalized is-info is-inverted is-outlined';
+      if (playerElement) {
+        playerElement.classList =
+          'button is-capitalized is-info is-inverted is-outlined';
+      }
     }
   }
 }
@@ -315,8 +309,10 @@ function playerHighlight() {
       let name = memberObject[i]['name'],
         playerId = name + 'Player',
         playerElement = document.getElementById(playerId);
-      playerElement.classList =
-        'button is-capitalized is-info is-inverted is-outlined is-hovered';
+      if (playerElement) {
+        playerElement.classList =
+          'button is-capitalized is-info is-inverted is-outlined is-hovered';
+      }
     }
   }
 }
@@ -636,6 +632,32 @@ function beepEffect() {
 }
 
 // modal
+
+function toggleMemberList() {
+  let memberListElement = document.getElementById('memberlist');
+  memberListElement.classList.toggle('memberlist');
+  memberButton();
+}
+
+function memberButton() {
+  let memberListElement = document.getElementById('memberlist'),
+    arrowPath = document.getElementById('arrowPath');
+  arrowbutton = document.getElementById('arrowBtn');
+
+  if (memberListElement.classList.contains('memberlist')) {
+    arrowbutton.style = 'margin-left:1rem; transform: translateY(-30%)';
+    arrowPath.setAttribute(
+      'd',
+      'M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41z'
+    );
+  } else {
+    arrowbutton.style = 'margin-left:1rem; transform: translateY(30%)';
+    arrowPath.setAttribute(
+      'd',
+      'M279 224H41c-21.4 0-32.1-25.9-17-41L143 64c9.4-9.4 24.6-9.4 33.9 0l119 119c15.2 15.1 4.5 41-16.9 41z'
+    );
+  }
+}
 function activeModal() {
   let modal = document.getElementById('addMemberModal'),
     modalContainer = document.querySelector('html'),
