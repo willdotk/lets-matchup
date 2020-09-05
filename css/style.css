@@ -106,12 +106,24 @@ input:checked + .slider:before {
 
 .court-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .grid > p {
   margin: 0.5rem;
   padding: 0;
+}
+
+.memberlistgrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.memberlist {
+  display: none;
+}
+.arrowBtn {
+  transform: translateY(-30%);
 }
 
 @media screen and (max-width: 768px) {
@@ -122,14 +134,16 @@ input:checked + .slider:before {
 }
 
 @media screen and (max-width: 1023px) {
-  .court-grid {
+  .court-grid,
+  .memberlistgrid {
     display: grid;
     grid-template-columns: 1fr;
   }
 }
 
 @media screen and (min-width: 1024px) and (max-width: 1600px) {
-  .court-grid {
+  .court-grid,
+  .memberlistgrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
   }
