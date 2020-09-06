@@ -101,7 +101,7 @@ function deleteMember(event) {
       }
     }
     setMemberStorage(memberObject);
-    location.reload();
+    rearrangeTeam();
   }
 }
 
@@ -130,6 +130,7 @@ function attendanceCheck(event) {
   setMemberStorage(memberObject);
   playerNumber();
   teamNumber();
+  rearrangeTeam();
 }
 function playerOnBench(name) {
   const getGridDiv = document.getElementById('playerOnBench'),
