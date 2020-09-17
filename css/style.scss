@@ -3,11 +3,9 @@
   position: absolute;
   width: 100%;
   height: 100%;
-  display: -ms-grid;
   display: grid;
   place-items: center;
 }
-
 .landing-bg {
   position: absolute;
   overflow: hidden;
@@ -16,7 +14,6 @@
   z-index: -500;
   opacity: 0.5;
 }
-
 .landing-btn {
   font-size: 3rem;
   font-weight: 700;
@@ -24,17 +21,14 @@
   height: 100%;
   top: 50%;
 }
-
 .landing-btn:hover {
   background-color: rgba(255, 255, 255, 0.4);
 }
-
 .text-v-center {
   position: relative;
   color: #073452;
   top: 50%;
 }
-
 .caption {
   position: absolute;
   color: #fff;
@@ -55,20 +49,16 @@
 .field-label {
   text-align: left;
 }
-
 .maindashboard {
   margin-top: 1rem;
 }
-
 .clubname {
   border-bottom: grey 1px solid;
   border-top-style: hidden;
   border-left-style: hidden;
   border-right-style: hidden;
-  -webkit-margin-before: 1rem;
-          margin-block-start: 1rem;
-  -webkit-margin-after: 0;
-          margin-block-end: 0;
+  margin-block-start: 1rem;
+  margin-block-end: 0;
 }
 
 @media screen and (max-width: 768px) {
@@ -82,13 +72,9 @@
   margin-left: 40%;
   margin-right: 40%;
 }
-
 .level-right.is-flex-mobile {
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  justify-content: center;
 }
-
 .github {
   margin-left: 1rem;
   width: 2rem;
@@ -139,12 +125,12 @@ input:checked + .slider {
 }
 
 input:focus + .slider {
-  -webkit-box-shadow: 0 0 1px #2196f3;
-          box-shadow: 0 0 1px #2196f3;
+  box-shadow: 0 0 1px #2196f3;
 }
 
 input:checked + .slider:before {
   -webkit-transform: translateX(1.3rem);
+  -ms-transform: translateX(1.3rem);
   transform: translateX(1.3rem);
 }
 
@@ -158,17 +144,13 @@ input:checked + .slider:before {
 }
 
 .grid {
-  display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-      grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
 }
 
 .court-grid {
-  display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 1fr 1fr 1fr;
-      grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .grid > p {
@@ -177,55 +159,43 @@ input:checked + .slider:before {
 }
 
 .memberlistgrid {
-  display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 1fr 1fr 1fr;
-      grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .memberlist {
   display: none;
 }
-
 .arrowBtn {
-  -webkit-transform: translateY(-30%);
-          transform: translateY(-30%);
+  transform: translateY(-30%);
 }
 
 @media screen and (max-width: 768px) {
   .grid {
-    display: -ms-grid;
     display: grid;
-    -ms-grid-columns: 1fr 1fr 1fr;
-        grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
   }
 }
 
 @media screen and (max-width: 1023px) {
   .court-grid,
   .memberlistgrid {
-    display: -ms-grid;
     display: grid;
-    -ms-grid-columns: 1fr;
-        grid-template-columns: 1fr;
+    grid-template-columns: 1fr;
   }
 }
 
 @media screen and (min-width: 1024px) and (max-width: 1600px) {
   .court-grid,
   .memberlistgrid {
-    display: -ms-grid;
     display: grid;
-    -ms-grid-columns: 1fr 1fr;
-        grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 }
 
 .grid-arrow {
-  display: -ms-grid;
   display: grid;
-  -ms-grid-rows: 1fr 0.5fr 1fr;
-      grid-template-rows: 1fr 0.5fr 1fr;
+  grid-template-rows: 1fr 0.5fr 1fr;
 }
 
 .tile.is-parent.has-vcentered {
@@ -233,10 +203,8 @@ input:checked + .slider:before {
   -ms-flex-align: center;
   align-items: center;
 }
-
 .columns.has-vcentered {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
 }
-/*# sourceMappingURL=style.css.map */

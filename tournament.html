@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-175987075-1"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+
+      gtag('config', 'UA-175987075-1');
+    </script>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Team matching app for double match sports, games or the like."
+    />
+
+    <meta
+      property="og:description"
+      content="Team matching app for double match sports, games or the like."
+    />
+    <meta property="og:title" content="Let's Match Up" />
+
+    <meta
+      property="twitter:description"
+      content="Team matching app for double match sports, games or the like. "
+    />
+    <meta name="twitter:title" content="Let's Match Up" />
+
+    <title>Let's Match Up</title>
+    <!-- Bulma Version 0.9.0-->
+    <link rel="stylesheet" href="css/bulma.min.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" type="image/png" href="img/favicon.png" />
+  </head>
+
+  <body>
+    <!-- START NAV -->
+    <div class="container">
+      <div class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <input
+              id="clubname"
+              class="navbar-item brand-text is-size-3 clubname"
+              onchange="setClubName()"
+            />
+          </div>
+        </div>
+        <div class="level-right">
+          <div class="level-item">
+            <a href="/"> <button class="button subtitle">Home</button></a>
+          </div>
+          <div class="level-item">
+            <div
+              id="memberBtn"
+              class="button subtitle"
+              onclick="toggleMemberList()"
+            >
+              Member List
+              <span
+                id="arrowBtn"
+                class="icon arrowBtn"
+                style="margin-left: 1rem"
+              >
+                <svg
+                  aria-hidden="true"
+                  fill="grey"
+                  focusable="false"
+                  role="img"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 320 512"
+                  width="1.6rem"
+                >
+                  <path
+                    id="arrowPath"
+                    fill="grey"
+                    d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41z"
+                  ></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END NAV -->
+    <div class="container maindashboard">
+      <aside id="memberlist" class="menu memberlist">
+        <div id="addMemberModal" class="modal">
+          <div class="modal-background has-background-info-light"></div>
+          <div class="modal-content">
+            <div class="field">
+              <div class="field-label is-normal">
+                <label class="label has-text-grey-light">Name</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <p class="control">
+                    <input
+                      id="nameInput"
+                      class="input"
+                      type="text"
+                      placeholder="New Member Name"
+                    />
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <div class="field-label is-normal">
+                <label class="label has-text-grey-light"
+                  >Play Level (1 to 10)</label
+                >
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <p class="control">
+                    <input
+                      id="levelInput"
+                      class="input"
+                      type="text"
+                      placeholder="Play level"
+                    />
+                  </p>
+                </div>
+              </div>
+            </div>
+            <input
+              class="button has-text-grey-light"
+              type="submit"
+              value="Add"
+              onclick="addBtn()"
+            />
+          </div>
+          <button
+            class="modal-close is-large has-background-grey-lighter"
+            aria-label="close"
+            onclick="deactiveModal()"
+          ></button>
+        </div>
+        <div class="menu-label">
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item subtitle">Member</div>
+            </div>
+            <div class="level-right is-flex-mobile" onclick="activeModal()">
+              <div class="level-item icon" style="cursor: pointer">
+                <img src="img/plus.svg" alt="add member" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <ul id="members" class="menu-list is-capitalized memberlistgrid"></ul>
+      </aside>
+      <div id="dashboard">
+        <section class="hero is-info is-mobile">
+          <div class="hero-body">
+            <div class="container">
+              <h1 class="title">Hello Team.</h1>
+              <div id="playerOnBench" class="grid"></div>
+            </div>
+          </div>
+        </section>
+        <section class="tile is-ancestor has-text-centered">
+          <div class="tile is-parent is-vertical">
+            <article class="tile is-child box">
+              <p id="playerNumber" class="title">0</p>
+              <p class="subtitle">Players</p>
+            </article>
+            <article class="tile is-child box">
+              <p id="teamNumber" class="title">0</p>
+              <p class="subtitle">Teams</p>
+            </article>
+            <article class="tile is-child box">
+              <p id="matchNumber" class="title">0</p>
+              <p class="subtitle">Matches</p>
+            </article>
+          </div>
+          <div class="tile is-parent">
+            <article class="tile is-child box">
+              <p class="title">Team List</p>
+              <div id="teamList"></div>
+            </article>
+          </div>
+        </section>
+        <br />
+        <section class="tile is-ancestor has-text-centered">
+          <div class="tile is-parent has-vcentered">
+            <article class="tile is-child">
+              <p class="title" style="margin: 2rem">Play Courts</p>
+            </article>
+            <article class="tile is-child">
+              <div class="columns has-vcentered">
+                <div class="column is-three-fifths">
+                  <p class="subtitle">No. of Courts</p>
+                  <p id="courtNumber" class="title">1</p>
+                </div>
+                <div class="column">
+                  <div class="grid-arrow">
+                    <span>
+                      <img
+                        id="upArrow"
+                        class="button"
+                        src="img/arrow-circle-up.svg"
+                        alt="up arrow"
+                        onclick="upArrow()"
+                      />
+                    </span>
+                    <span><br /></span>
+                    <span>
+                      <img
+                        id="downArrow"
+                        class="button"
+                        src="img/arrow-circle-down.svg"
+                        alt="down arrow"
+                        onclick="downArrow()"
+                      />
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <article class="tile is-child">
+              <button
+                style="margin: 2rem"
+                class="button is-info is-outlined is-medium"
+                onclick="rearrangeTeam()"
+              >
+                Rearrange team
+              </button>
+            </article>
+          </div>
+        </section>
+        <section class="columns">
+          <div class="column">
+            <section class="info-tiles">
+              <div id="courtTile" class="court-grid"></div>
+            </section>
+          </div>
+        </section>
+        <footer class="container">
+          <div class="level">
+            <div class="level-left"></div>
+            <div class="level-right">
+              <div class="level-item">
+                <p>
+                  designed and developed by
+                  <strong>willdotk</strong>
+                </p>
+              </div>
+              <div class="level-item">
+                <p>willdotk@gmail.com</p>
+                <div class="icon github" style="cursor: pointer">
+                  <a href="https://github.com/willdotk/lets-matchup">
+                    <img src="img/github.svg" alt="github" width="150" />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <script src="js/tournament.js"></script>
+  </body>
+</html>
