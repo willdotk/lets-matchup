@@ -582,7 +582,6 @@ function startCountDown(event) {
       }`;
       column.firstChild.innerText = Number(hiddenTime) - 1;
       hiddenTime--;
-      console.log(column.lastChild.innerText);
     }
   }, 1000);
 }

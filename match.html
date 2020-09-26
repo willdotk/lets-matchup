@@ -181,10 +181,6 @@
               <p id="teamNumber" class="title">0</p>
               <p class="subtitle">Teams</p>
             </article>
-            <article class="tile is-child box">
-              <p id="matchNumber" class="title">0</p>
-              <p class="subtitle">Matches</p>
-            </article>
           </div>
           <div class="tile is-parent">
             <article class="tile is-child box">
@@ -196,9 +192,6 @@
         <br />
         <section class="tile is-ancestor has-text-centered">
           <div class="tile is-parent has-vcentered">
-            <article class="tile is-child">
-              <p class="title" style="margin: 2rem">Play Courts</p>
-            </article>
             <article class="tile is-child">
               <div class="columns has-vcentered">
                 <div class="column is-three-fifths">
@@ -239,6 +232,29 @@
                 Rearrange team
               </button>
             </article>
+            <div class="tile is-parent is-vertical">
+              <article class="tile is-child">
+                <p id="timecount" class="is-size-3"></p>
+              </article>
+            </div>
+            <div class="tile is-parent is-vertical">
+              <article class="tile is-child">
+                <button
+                  class="button is-success is-medium is-fullwidth"
+                  onclick="startCountDown()"
+                >
+                  Start
+                </button>
+              </article>
+              <article class="tile is-child">
+                <button
+                  class="button is-danger is-medium is-fullwidth"
+                  onclick="finishGame()"
+                >
+                  Finish
+                </button>
+              </article>
+            </div>
           </div>
         </section>
         <section class="columns">
