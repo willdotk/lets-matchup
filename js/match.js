@@ -579,7 +579,10 @@ function finishGame() {
     } while (courtTile.childElementCount > 0);
     removeAllChild('teamList');
     updateTeamListDisplay();
-    addCourt();
+
+    if (courtTile.childElementCount === 0) {
+      addCourt();
+    }
     playerOnCourtHighlight();
     courtNumberUpdate();
   }
