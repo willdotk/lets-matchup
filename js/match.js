@@ -2,6 +2,7 @@
 
 let memberList = new Array(),
   totalTeamList = new Array(),
+  totalMatchTeamList = new Array(),
   playerList = () => {
     let lst = new Array();
     for (let i = 0; i < memberObject.length; i++) {
@@ -15,6 +16,7 @@ let memberList = new Array(),
   lStorage = window.localStorage,
   members = document.getElementById('members'),
   memberObject = getObject('members'),
+  initPList = playerList(),
   courtField = document.getElementById('courtTile'),
   levelAverage,
   teamMatchTolerance = 0.1,
@@ -185,7 +187,9 @@ function rearrangeTeam() {
     initMemberList();
   }, 1);
 }
-
+function getTeamAverage(team) {
+  return (Number(team[0]['level']) + Number(team[1]['level'])) / 2;
+}
 function verifyTeamLevel(playerAverage) {
   for (let i = 0; i < totalTeamList.length; i++) {
     if (Math.abs(getTeamAverage(totalTeamList[i]) - playerAverage) > 0.5) {
@@ -196,51 +200,46 @@ function verifyTeamLevel(playerAverage) {
     }
   }
 }
-function getTeamAverage(list) {
-  return (Number(list[0]['level']) + Number(list[1]['level'])) / 2;
-}
-function getTeamList(playerlst) {
-  do {
-    for (let i = 0; i < playerlst.length; i++) {
-      addTeamToList(playerlst);
-    }
-    teamMatchTolerance += 0.05;
-  } while (totalTeamList.length < teamNumber());
-  verifyTeamLevel(getPlayerLevelAverage());
-  teamMatchTolerance = 0.1;
-  return totalTeamList;
-}
-
-function addTeamToList(playerlst) {
-  let playerAverage = getPlayerLevelAverage();
-  for (let k = 0; k < playerlst.length; k++) {
-    let upTeam = teamUp(playerlst, playerAverage);
-    if (upTeam) {
-      totalTeamList.push(upTeam);
-      for (let i = 0; i < totalTeamList.length; i++) {
-        for (let j = 0; j < pList.length; j++) {
-          totalTeamList[i].forEach((element) => {
-            if (element['name'] === pList[j]['name']) {
-              pList.splice(j, 1);
-              return upTeam;
-            }
-          });
-        }
-      }
-    }
+function teamListToTeamMatchList(list) {
+  for (let i = 0; i < list.length; i++) {
+    totalMatchTeamList.push(list[i]);
   }
 }
+
+function getTeamList(playerlst) {
+  let lst = shuffle(playerlst);
+  for (let i = 0; i < lst.length; i++) {
+    teamUp(lst, getPlayerLevelAverage());
+  }
+}
+
 function teamUp(list, playerAverage) {
   if (list.length > 1) {
-    for (let i = 1; i < list.length; i++) {
-      let calc =
-        playerAverage -
-        (Number(list[0]['level']) + Number(list[i]['level'])) / 2;
-      if (Math.abs(calc) < teamMatchTolerance) {
-        let tempList = [];
-        tempList.push(list[0]);
-        tempList.push(list[i]);
-        return tempList;
+    for (let i = 0; i < list.length - 1; i++) {
+      let a = i + 1;
+      for (let j = a; j < list.length; j++) {
+        let calc =
+          playerAverage -
+          (Number(list[i]['level']) + Number(list[j]['level'])) / 2;
+        for (
+          let tolerance = teamMatchTolerance;
+          tolerance <= 1;
+          tolerance += 0.05
+        ) {
+          if (Math.abs(calc) < tolerance) {
+            let tempList = [];
+            tempList.push(list[i]);
+            tempList.push(list[j]);
+            tempList.sort();
+            if (
+              JSON.stringify(totalTeamList).includes(JSON.stringify(tempList))
+            ) {
+              continue;
+            } else {
+              totalTeamList.push(tempList);
+            }
+          }
+        }
       }
     }
   }
@@ -280,34 +279,21 @@ function teamListDisplay(playerlst) {
 }
 function updateTeamListDisplay() {
   const teamListElement = document.getElementById('teamList');
-  singleTeamToPlayerList();
   removeAllChild('teamList');
   for (let i = 0; i < totalTeamList.length; i++) {
     let teamNameElement = pElement(),
       teamName =
-        totalTeamList[i][0]['name'] + ' & ' + totalTeamList[i][1]['name'],
+        totalTeamList[i][0]['name'] +
+        ' ' +
+        totalTeamList[i][0]['level'] +
+        ' & ' +
+        totalTeamList[i][1]['name'] +
+        ' ' +
+        totalTeamList[i][1]['level'],
       teamNameNode = document.createTextNode(teamName);
     teamNameElement.classList = 'is-size-5 is-capitalized';
     teamNameElement.appendChild(teamNameNode);
     teamListElement.appendChild(teamNameElement);
-  }
-}
-function singleTeamToPlayerList() {
-  if (totalTeamList.length === 1) {
-    for (let i = 0; i < totalTeamList[0].length; i++) {
-      pList.unshift(totalTeamList[0][i]);
-    }
-    totalTeamList.splice(0, 1);
-    getTeamList(pList);
-    updateTeamListDisplay();
-    playerOnCourtHighlight();
-    firstCourtInit();
-  }
-  if (totalTeamList.length < 1) {
-    getTeamList(pList);
-    updateTeamListDisplay();
-    playerOnCourtHighlight();
-    firstCourtInit();
   }
 }
 function playerDeHighlight() {
@@ -343,25 +329,33 @@ function playerHighlight() {
     }
   }
 }
-function playerNotInTeam() {
-  if (pList) {
-    for (let i = 0; i < pList.length; i++) {
-      let name = pList[i]['name'],
-        playerId = name + 'Player',
-        playerElement = document.getElementById(playerId);
-      if (playerElement) {
-        playerElement.classList = 'button is-capitalized is-info is-outlined';
-        playerElement.style =
-          'color: hsl(0, 0%, 71%); border-color: hsl(0, 0%, 71%)';
-      }
-    }
-  }
-}
-
 function playerOnCourtHighlight() {
   playerDeHighlight();
   playerHighlight();
-  playerNotInTeam();
+}
+
+// Match list
+function getSingleMatchList() {
+  for (let i = 0; i < totalTeamList.length; i++) {
+    let a = i + 1;
+    for (let j = a; j < totalTeamList.length - a; j++) {
+      if (
+        totalTeamList[i][0]['name'] !== totalTeamList[j][0]['name'] &&
+        totalTeamList[i][0]['name'] !== totalTeamList[j][1]['name'] &&
+        totalTeamList[i][1]['name'] !== totalTeamList[j][0]['name'] &&
+        totalTeamList[i][1]['name'] !== totalTeamList[j][1]['name'] &&
+        Math.abs(
+          getTeamAverage(totalTeamList[i]) - getTeamAverage(totalTeamList[j])
+        ) < 0.5
+      ) {
+        let tempList = [];
+        tempList.push(totalTeamList[i]);
+        tempList.push(totalTeamList[j]);
+        tempList.sort();
+        totalMatchTeamList.push(tempList);
+      }
+    }
+  }
 }
 
 // Court
@@ -399,35 +393,39 @@ function setCourtNumber(newnumber) {
 }
 
 function addCourt() {
-  for (let i = 0; i < totalTeamList.length; i += 2) {
+  for (let i = 0; i < totalMatchTeamList.length; i++) {
+    console.log(i);
     if (
-      totalTeamList[i][0]['oncourt'] !== true &&
-      totalTeamList[i][1]['oncourt'] !== true &&
-      totalTeamList[i + 1][0]['oncourt'] !== true &&
-      totalTeamList[i + 1][1]['oncourt'] !== true
+      totalMatchTeamList[i][0][0]['oncourt'] !== true &&
+      totalMatchTeamList[i][0][1]['oncourt'] !== true &&
+      totalMatchTeamList[i][1][0]['oncourt'] !== true &&
+      totalMatchTeamList[i][1][1]['oncourt'] !== true
     ) {
       let firstTeamName =
-          totalTeamList[i][0]['name'] + ' & ' + totalTeamList[i][1]['name'],
-        secondTeamName =
-          totalTeamList[i + 1][0]['name'] +
+          totalMatchTeamList[i][0][0]['name'] +
           ' & ' +
-          totalTeamList[i + 1][1]['name'],
-        tempPlayerList = [
-          totalTeamList[i][0]['name'],
-          totalTeamList[i][1]['name'],
-          totalTeamList[i + 1][0]['name'],
-          totalTeamList[i + 1][1]['name'],
-        ];
-      for (let i = 0; i < memberObject.length; i++) {
+          totalMatchTeamList[i][0][1]['name'],
+        secondTeamName =
+          totalMatchTeamList[i][1][0]['name'] +
+          ' & ' +
+          totalMatchTeamList[i][1][1]['name'],
+        tempPlayerList = [];
+      console.log(firstTeamName);
+
+      tempPlayerList.push(totalMatchTeamList[i][0][0]['name']);
+      tempPlayerList.push(totalMatchTeamList[i][0][1]['name']);
+      tempPlayerList.push(totalMatchTeamList[i][1][0]['name']);
+      tempPlayerList.push(totalMatchTeamList[i][1][1]['name']);
+      for (let k = 0; k < memberObject.length; k++) {
         for (let j = 0; j < tempPlayerList.length; j++) {
-          if (memberObject[i]['name'] === tempPlayerList[j]) {
-            memberObject[i]['oncourt'] = true;
+          if (memberObject[k]['name'] === tempPlayerList[j]) {
+            memberObject[k]['oncourt'] = true;
           }
         }
       }
       setMemberStorage(memberObject);
-      arrangeTeamOnCourt(firstTeamName, secondTeamName);
-      return;
+      displayTeamOnCourt(firstTeamName, secondTeamName);
+      // return;
     }
   }
 }
@@ -469,7 +467,7 @@ function extractCourt() {
     return;
   }
 }
-function arrangeTeamOnCourt(firstTeam, secondTeam) {
+function displayTeamOnCourt(firstTeam, secondTeam) {
   let addCourt = document.createElement('article'),
     courtHero = addCourtHero(firstTeam, secondTeam);
 
@@ -717,6 +715,13 @@ function setMemberToStorage(name, level) {
   memberToList(name);
 }
 
+function setOnBench() {
+  for (let i = 0; i < memberObject.length; i++) {
+    memberObject[i]['onbench'] = '0';
+  }
+  setMemberStorage(memberObject);
+}
+
 function setMemberStorage(list) {
   lStorage.setItem('members', JSON.stringify(list));
 }
@@ -751,6 +756,7 @@ function initMemberList() {
   for (let i = 0; i < sortedObject(memberObject).length; i++) {
     memberToList(sortedObject(memberObject)[i]);
   }
+  setOnBench();
   initPlayerList();
 }
 function initPlayerList() {
@@ -772,8 +778,9 @@ function initPlayerList() {
   }
   playerNumber();
   teamNumber();
-  teamListDisplay(shuffle(pList));
+  teamListDisplay(pList);
   playerOncourtInit();
+  getSingleMatchList();
   firstCourtInit();
   playerOnCourtHighlight();
   initialTimeCount();
@@ -786,33 +793,100 @@ function playerOncourtInit() {
 
 function initCourtTile(firstTeam, secondTeam) {
   removeAllChild('courtTile');
-  arrangeTeamOnCourt(firstTeam, secondTeam, 0);
+  displayTeamOnCourt(firstTeam, secondTeam);
 }
+
 function firstCourtInit() {
   // matchList[nth match][nth team(0 or 1)][nth person(0 or 1)]['name']
   if (totalTeamList.length !== 0) {
-    let firstTeamName =
-        totalTeamList[0][0]['name'] + ' & ' + totalTeamList[0][1]['name'],
-      secondTeamName =
-        totalTeamList[1][0]['name'] + ' & ' + totalTeamList[1][1]['name'],
-      tempPlayerList = [
-        totalTeamList[0][0]['name'],
-        totalTeamList[0][1]['name'],
-        totalTeamList[1][0]['name'],
-        totalTeamList[1][1]['name'],
-      ];
-
-    for (let i = 0; i < memberObject.length; i++) {
-      for (let j = 0; j < tempPlayerList.length; j++) {
-        if (memberObject[i]['name'] === tempPlayerList[j]) {
-          memberObject[i]['oncourt'] = true;
+    for (let k = 0; k < totalMatchTeamList.length; k++) {
+      if (
+        totalMatchTeamList[k][0][0]['oncourt'] !== true &&
+        totalMatchTeamList[k][0][1]['oncourt'] !== true &&
+        totalMatchTeamList[k][1][0]['oncourt'] !== true &&
+        totalMatchTeamList[k][1][1]['oncourt'] !== true &&
+        Math.abs(
+          getTeamAverage(totalMatchTeamList[k][0]) -
+            getTeamAverage(totalMatchTeamList[k][1])
+        ) < 0.5
+      ) {
+        let firstTeamName =
+            totalMatchTeamList[k][0][0]['name'] +
+            ' & ' +
+            totalMatchTeamList[k][0][1]['name'],
+          secondTeamName =
+            totalMatchTeamList[k][1][0]['name'] +
+            ' & ' +
+            totalMatchTeamList[k][1][1]['name'],
+          tempPlayerList = [
+            totalMatchTeamList[k][0][0]['name'],
+            totalMatchTeamList[k][0][1]['name'],
+            totalMatchTeamList[k][1][0]['name'],
+            totalMatchTeamList[k][1][1]['name'],
+          ];
+        for (let i = 0; i < memberObject.length; i++) {
+          for (let j = 0; j < tempPlayerList.length; j++) {
+            if (memberObject[i]['name'] === tempPlayerList[j]) {
+              memberObject[i]['oncourt'] = true;
+            }
+          }
         }
+        setMemberStorage(memberObject);
+        initCourtTile(firstTeamName, secondTeamName);
+        return;
       }
     }
-    setMemberStorage(memberObject);
-    initCourtTile(firstTeamName, secondTeamName);
   }
 }
+
+// function firstCourtInit() {
+//   // matchList[nth match][nth team(0 or 1)][nth person(0 or 1)]['name']
+//   if (totalTeamList.length !== 0) {
+//     for (let k = 1; k < totalTeamList.length - 1; k++) {
+//       if (
+//         totalTeamList[0][0]['name'] !== totalTeamList[k][0]['name'] &&
+//         totalTeamList[0][0]['name'] !== totalTeamList[k][1]['name'] &&
+//         totalTeamList[0][1]['name'] !== totalTeamList[k][0]['name'] &&
+//         totalTeamList[0][1]['name'] !== totalTeamList[k][1]['name'] &&
+//         Math.abs(
+//           getTeamAverage(totalTeamList[0]) - getTeamAverage(totalTeamList[k])
+//         ) < 0.5
+//       ) {
+//         let firstTeamName =
+//             totalTeamList[0][0]['name'] + ' & ' + totalTeamList[0][1]['name'],
+//           secondTeamName =
+//             totalTeamList[k][0]['name'] + ' & ' + totalTeamList[k][1]['name'],
+//           tempPlayerList = [
+//             totalTeamList[0][0]['name'],
+//             totalTeamList[0][1]['name'],
+//             totalTeamList[k][0]['name'],
+//             totalTeamList[k][1]['name'],
+//           ];
+//         for (let i = 0; i < memberObject.length; i++) {
+//           for (let j = 0; j < tempPlayerList.length; j++) {
+//             if (memberObject[i]['name'] === tempPlayerList[j]) {
+//               memberObject[i]['oncourt'] = true;
+//             }
+//           }
+//         }
+//         setMemberStorage(memberObject);
+//         initCourtTile(firstTeamName, secondTeamName);
+//         return;
+//       }
+//     }
+
+//     // let firstTeamName =
+//     //     totalTeamList[0][0]['name'] + ' & ' + totalTeamList[0][1]['name'],
+//     //   secondTeamName =
+//     //     totalTeamList[1][0]['name'] + ' & ' + totalTeamList[1][1]['name'],
+//     //   tempPlayerList = [
+//     //     totalTeamList[0][0]['name'],
+//     //     totalTeamList[0][1]['name'],
+//     //     totalTeamList[1][0]['name'],
+//     //     totalTeamList[1][1]['name'],
+//     //   ];
+//   }
+// }
 
 function init() {
   initClubName();
