@@ -183,6 +183,9 @@ function rearrangeTeam() {
   setTimeout(() => {
     initMemberList();
   }, 1);
+
+  let currentNumberElement = document.getElementById('courtNumber');
+  currentNumberElement.innerText = 1;
 }
 
 function verifyTeamLevel(playerAverage) {
@@ -196,6 +199,7 @@ function verifyTeamLevel(playerAverage) {
 function getTeamAverage(list) {
   return (Number(list[0]['level']) + Number(list[1]['level'])) / 2;
 }
+
 function getTeamList() {
   let sList = shuffle(pList);
   do {
@@ -204,7 +208,7 @@ function getTeamList() {
     }
     teamMatchTolerance += 0.05;
   } while (totalTeamList.length < teamNumber());
-  verifyTeamLevel(getPlayerLevelAverage(pList));
+  // verifyTeamLevel(getPlayerLevelAverage(pList));
   return totalTeamList;
 }
 
@@ -214,7 +218,6 @@ function addTeamToList(pList) {
     let upTeam = teamUp(pList, playerAverage);
     if (upTeam) {
       totalTeamList.push(upTeam);
-      // setTeamList(totalTeamList);
       for (let i = 0; i < totalTeamList.length; i++) {
         for (let j = 0; j < pList.length; j++) {
           totalTeamList[i].forEach((element) => {
@@ -227,21 +230,31 @@ function addTeamToList(pList) {
     }
   }
 }
+
+
 function teamUp(list, playerAverage) {
   if (list.length > 1) {
     for (let i = 1; i < list.length; i++) {
       let calc =
         playerAverage -
         (Number(list[0]['level']) + Number(list[i]['level'])) / 2;
-      if (Math.abs(calc) < teamMatchTolerance) {
-        let tempList = [];
-        tempList.push(list[0]);
-        tempList.push(list[i]);
-        return tempList;
-      }
+        for (
+          let tolerance = teamMatchTolerance;
+          tolerance < 1;
+          tolerance += 0.05
+        ){
+          if (Math.abs(calc) < teamMatchTolerance) {
+          let tempList = [];
+          tempList.push(list[0]);
+          tempList.push(list[i]);
+          tempList.sort();
+          return tempList;
+        }
+        }
     }
   }
 }
+
 function setPlayerList() {
   pList = [];
   for (let i = 0; i < memberObject.length; i++) {
@@ -373,7 +386,7 @@ function setCourtNumber(newnumber) {
   }
 }
 function getMatchList() {
-  for (let i = 0; i < totalTeamList.length; i++) {
+  for (let i = 0; i < totalTeamList.length-1; i++) {
     for (let j = i + 1; j < totalTeamList.length; j++) {
       let tempList = [];
       tempList.push(totalTeamList[i]);
@@ -405,7 +418,11 @@ function addCourt() {
       matchList[i][0][0]['oncourt'] !== true &&
       matchList[i][0][1]['oncourt'] !== true &&
       matchList[i][1][0]['oncourt'] !== true &&
-      matchList[i][1][1]['oncourt'] !== true
+      matchList[i][1][1]['oncourt'] !== true &&
+      Math.abs(
+        getTeamAverage(matchList[i][0]) -
+          getTeamAverage(matchList[i][1])
+      ) < 0.5
     ) {
       let firstTeamName =
           matchList[i][0][0]['name'] + ' & ' + matchList[i][0][1]['name'],

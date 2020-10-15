@@ -169,19 +169,21 @@ function playerNumber() {
 }
 function teamNumber() {
   const teamNumber = document.getElementById('teamNumber');
-  let teamCount = playerNumber() / 2;
+  let teamCount = totalTeamList.length;
   teamNumber.innerText = teamCount;
   return Math.floor(teamCount);
 }
 
 // Match up team members
 function rearrangeTeam() {
-  removeAllChild('members');
-  removeAllChild('teamList');
-  removeAllChild('playerOnBench');
-
   pList = [];
   totalTeamList = [];
+  totalMatchTeamList = [];
+
+  removeAllChild('members');
+  matchCount();
+  removeAllChild('playerOnBench');
+
 
   setTimeout(() => {
     initMemberList();
@@ -216,14 +218,13 @@ function getTeamList(playerlst) {
 function teamUp(list, playerAverage) {
   if (list.length > 1) {
     for (let i = 0; i < list.length - 1; i++) {
-      let a = i + 1;
-      for (let j = a; j < list.length; j++) {
+      for (let j = i + 1; j < list.length; j++) {
         let calc =
           playerAverage -
           (Number(list[i]['level']) + Number(list[j]['level'])) / 2;
         for (
           let tolerance = teamMatchTolerance;
-          tolerance <= 1;
+          tolerance < 1;
           tolerance += 0.05
         ) {
           if (Math.abs(calc) < tolerance) {
@@ -273,23 +274,25 @@ function shuffle(array) {
 // Team list display
 function teamListDisplay(playerlst) {
   getTeamList(playerlst);
-  updateTeamListDisplay();
+  // updateTeamListDisplay();
   playerOnCourtHighlight();
   firstCourtInit();
 }
+function matchCount(){
+  const teamListElement = document.getElementById('teamList');
+  let matchCount = totalMatchTeamList.length;
+  teamListElement.innerText = matchCount;
+}
+
 function updateTeamListDisplay() {
   const teamListElement = document.getElementById('teamList');
-  removeAllChild('teamList');
+  matchCount();
   for (let i = 0; i < totalTeamList.length; i++) {
     let teamNameElement = pElement(),
       teamName =
         totalTeamList[i][0]['name'] +
-        ' ' +
-        totalTeamList[i][0]['level'] +
         ' & ' +
-        totalTeamList[i][1]['name'] +
-        ' ' +
-        totalTeamList[i][1]['level'],
+        totalTeamList[i][1]['name'],
       teamNameNode = document.createTextNode(teamName);
     teamNameElement.classList = 'is-size-5 is-capitalized';
     teamNameElement.appendChild(teamNameNode);
@@ -336,24 +339,13 @@ function playerOnCourtHighlight() {
 
 // Match list
 function getSingleMatchList() {
-  for (let i = 0; i < totalTeamList.length; i++) {
-    let a = i + 1;
-    for (let j = a; j < totalTeamList.length - a; j++) {
-      if (
-        totalTeamList[i][0]['name'] !== totalTeamList[j][0]['name'] &&
-        totalTeamList[i][0]['name'] !== totalTeamList[j][1]['name'] &&
-        totalTeamList[i][1]['name'] !== totalTeamList[j][0]['name'] &&
-        totalTeamList[i][1]['name'] !== totalTeamList[j][1]['name'] &&
-        Math.abs(
-          getTeamAverage(totalTeamList[i]) - getTeamAverage(totalTeamList[j])
-        ) < 0.5
-      ) {
+  for (let i = 0; i < totalTeamList.length - 1; i++) {
+    for (let j = i + 1; j < totalTeamList.length; j++) {
         let tempList = [];
         tempList.push(totalTeamList[i]);
         tempList.push(totalTeamList[j]);
         tempList.sort();
         totalMatchTeamList.push(tempList);
-      }
     }
   }
 }
@@ -367,6 +359,7 @@ function upArrow() {
   addCourt();
   playerOnCourtHighlight();
   courtNumberUpdate();
+  setCourtCount();
 }
 function downArrow() {
   let currentNumberElement = document.getElementById('courtNumber'),
@@ -376,6 +369,7 @@ function downArrow() {
   extractCourt();
   playerOnCourtHighlight();
   courtNumberUpdate();
+  setCourtCount();
 }
 function setCourtNumber(newnumber) {
   let currentNumberElement = document.getElementById('courtNumber'),
@@ -393,29 +387,36 @@ function setCourtNumber(newnumber) {
 }
 
 function addCourt() {
-  for (let i = 0; i < totalMatchTeamList.length; i++) {
-    console.log(i);
+  let lst = shuffle(totalMatchTeamList);
+  for (let i = 0; i < lst.length; i++) {
     if (
-      totalMatchTeamList[i][0][0]['oncourt'] !== true &&
-      totalMatchTeamList[i][0][1]['oncourt'] !== true &&
-      totalMatchTeamList[i][1][0]['oncourt'] !== true &&
-      totalMatchTeamList[i][1][1]['oncourt'] !== true
+      lst[i][0][0]['oncourt'] !== true &&
+      lst[i][0][1]['oncourt'] !== true &&
+      lst[i][1][0]['oncourt'] !== true &&
+      lst[i][1][1]['oncourt'] !== true &&
+      lst[i][0][0]['name'] !== lst[i][1][0]['name'] &&
+        lst[i][0][0]['name'] !== lst[i][1][1]['name'] &&
+        lst[i][0][1]['name'] !== lst[i][1][0]['name'] &&
+        lst[i][0][1]['name'] !== lst[i][1][1]['name'] &&
+        Math.abs(
+          getTeamAverage(lst[i][0]) -
+            getTeamAverage(lst[i][1])
+        ) < 0.5
     ) {
       let firstTeamName =
-          totalMatchTeamList[i][0][0]['name'] +
+          lst[i][0][0]['name'] +
           ' & ' +
-          totalMatchTeamList[i][0][1]['name'],
+          lst[i][0][1]['name'],
         secondTeamName =
-          totalMatchTeamList[i][1][0]['name'] +
+          lst[i][1][0]['name'] +
           ' & ' +
-          totalMatchTeamList[i][1][1]['name'],
+          lst[i][1][1]['name'],
         tempPlayerList = [];
-      console.log(firstTeamName);
 
-      tempPlayerList.push(totalMatchTeamList[i][0][0]['name']);
-      tempPlayerList.push(totalMatchTeamList[i][0][1]['name']);
-      tempPlayerList.push(totalMatchTeamList[i][1][0]['name']);
-      tempPlayerList.push(totalMatchTeamList[i][1][1]['name']);
+      tempPlayerList.push(lst[i][0][0]['name']);
+      tempPlayerList.push(lst[i][0][1]['name']);
+      tempPlayerList.push(lst[i][1][0]['name']);
+      tempPlayerList.push(lst[i][1][1]['name']);
       for (let k = 0; k < memberObject.length; k++) {
         for (let j = 0; j < tempPlayerList.length; j++) {
           if (memberObject[k]['name'] === tempPlayerList[j]) {
@@ -425,10 +426,11 @@ function addCourt() {
       }
       setMemberStorage(memberObject);
       displayTeamOnCourt(firstTeamName, secondTeamName);
-      // return;
+      return;
     }
   }
 }
+
 let getSelectedTeams = (element) => {
   let playerNames = element.querySelector('.hero-body'),
     firstTeam = playerNames.firstChild.innerText.split(' & '),
@@ -531,33 +533,40 @@ function addCourtHeroBody(firstTeam, secondTeam) {
   return courtHeroBody;
 }
 
+
 function startCountDown() {
   let timeElement = document.getElementById('timecount'),
-    playtime = playSecond;
+  courtTile = document.getElementById('courtTile'),
+  courtcount = Number(getObject('courtcount'));
+  sec = playSecond
 
   let timerInterval = setInterval(() => {
-    if (playtime === 0) {
+    if (sec === 0) {
       timeElement.innerText = '0:00';
       clearInterval(timerInterval);
       beepEffect();
       do {
         deleteCourt();
       } while (courtTile.childElementCount > 0);
-      removeAllChild('teamList');
-      updateTeamListDisplay();
+      matchCount();
+
+      if (courtTile.childElementCount === 0) {
+        for(let i = 0; i < courtcount; i++){
+          addCourt();
+        }
+      }
       playerOnCourtHighlight();
       courtNumberUpdate();
     } else {
-      console.log(playtime);
-      console.log(playSecond);
-      let minutes = Math.floor(playtime / 60),
-        seconds = playtime % 60;
+      let minutes = Math.floor(sec / 60),
+        seconds = sec % 60;
       timeElement.innerText = `${minutes}:${
         seconds < 10 ? `0${seconds}` : `${seconds}`
       }`;
-      playtime--;
+      sec--;
     }
   }, 1000);
+
 }
 
 function removeAllChild(parentid) {
@@ -567,24 +576,40 @@ function removeAllChild(parentid) {
   }
 }
 
+function timerReset(){
+  let timer = document.getElementById('timer'),
+  newTimeCount = pElement();
+  newTimeCount.id = 'timecount';
+  newTimeCount.classList = 'is-size-3';
+  removeAllChild('timer');
+  timer.appendChild(newTimeCount);
+  initialTimeCount();
+  playSecond = playMinute * 60;
+}
+
 function finishGame() {
   const confirmDelete = confirm('Do you want to finish this game?'),
     courtTile = document.getElementById('courtTile');
 
-  if (confirmDelete === true) {
+  let courtcount = Number(getObject('courtcount'));
+  timerReset();
+  if (confirmDelete === true){
     do {
       deleteCourt();
     } while (courtTile.childElementCount > 0);
-    removeAllChild('teamList');
-    updateTeamListDisplay();
+    matchCount();
 
     if (courtTile.childElementCount === 0) {
-      addCourt();
+      for(let i = 0; i < courtcount; i++){
+        addCourt();
+      }
     }
     playerOnCourtHighlight();
     courtNumberUpdate();
+
   }
 }
+
 function deleteCourt() {
   const courtTile = document.getElementById('courtTile');
   let firstCourt = courtTile.firstChild,
@@ -604,16 +629,12 @@ function deleteCourt() {
         }
       }
     }
-    for (let k = 0; k < totalTeamList.length; k++) {
-      for (let l = 0; l < tempPlayerList.length; l += 2) {
-        if (
-          totalTeamList[k][0]['name'] === tempPlayerList[l] &&
-          totalTeamList[k][1]['name'] === tempPlayerList[l + 1]
-        ) {
-          pList.push(totalTeamList[k][0]);
-          pList.push(totalTeamList[k][1]);
-          totalTeamList.splice(k, 1);
-        }
+    for(let k = 0; k < totalMatchTeamList.length; k++){
+      if(totalMatchTeamList[k][0][0]['name'] === tempPlayerList[0] &&
+      totalMatchTeamList[k][0][1]['name'] === tempPlayerList[1] &&
+      totalMatchTeamList[k][1][0]['name'] === tempPlayerList[2] &&
+      totalMatchTeamList[k][1][1]['name'] === tempPlayerList[3]){
+        totalMatchTeamList.splice(k,1);
       }
     }
     setMemberStorage(memberObject);
@@ -729,6 +750,10 @@ function setClubName() {
   let clubname = document.getElementById('clubname').value;
   lStorage.setItem('clubname', JSON.stringify(clubname));
 }
+function setCourtCount() {
+  let courtcount = document.getElementById('courtNumber').innerText;
+  lStorage.setItem('courtcount', JSON.stringify(courtcount));
+}
 function getObject(object) {
   let lStorageObject = lStorage.getItem(object),
     parsedObj = JSON.parse(lStorageObject);
@@ -777,10 +802,11 @@ function initPlayerList() {
     }
   }
   playerNumber();
-  teamNumber();
   teamListDisplay(pList);
+  teamNumber();
   playerOncourtInit();
   getSingleMatchList();
+  matchCount();
   firstCourtInit();
   playerOnCourtHighlight();
   initialTimeCount();
@@ -805,6 +831,11 @@ function firstCourtInit() {
         totalMatchTeamList[k][0][1]['oncourt'] !== true &&
         totalMatchTeamList[k][1][0]['oncourt'] !== true &&
         totalMatchTeamList[k][1][1]['oncourt'] !== true &&
+        totalMatchTeamList[k][0][0]['name'] !== totalMatchTeamList[k][1][0]['name'] &&
+        totalMatchTeamList[k][0][0]['name'] !== totalMatchTeamList[k][1][1]['name'] &&
+        totalMatchTeamList[k][0][1]['name'] !== totalMatchTeamList[k][1][0]['name'] &&
+        totalMatchTeamList[k][0][1]['name'] !== totalMatchTeamList[k][1][1]['name'] &&
+
         Math.abs(
           getTeamAverage(totalMatchTeamList[k][0]) -
             getTeamAverage(totalMatchTeamList[k][1])
@@ -838,55 +869,6 @@ function firstCourtInit() {
     }
   }
 }
-
-// function firstCourtInit() {
-//   // matchList[nth match][nth team(0 or 1)][nth person(0 or 1)]['name']
-//   if (totalTeamList.length !== 0) {
-//     for (let k = 1; k < totalTeamList.length - 1; k++) {
-//       if (
-//         totalTeamList[0][0]['name'] !== totalTeamList[k][0]['name'] &&
-//         totalTeamList[0][0]['name'] !== totalTeamList[k][1]['name'] &&
-//         totalTeamList[0][1]['name'] !== totalTeamList[k][0]['name'] &&
-//         totalTeamList[0][1]['name'] !== totalTeamList[k][1]['name'] &&
-//         Math.abs(
-//           getTeamAverage(totalTeamList[0]) - getTeamAverage(totalTeamList[k])
-//         ) < 0.5
-//       ) {
-//         let firstTeamName =
-//             totalTeamList[0][0]['name'] + ' & ' + totalTeamList[0][1]['name'],
-//           secondTeamName =
-//             totalTeamList[k][0]['name'] + ' & ' + totalTeamList[k][1]['name'],
-//           tempPlayerList = [
-//             totalTeamList[0][0]['name'],
-//             totalTeamList[0][1]['name'],
-//             totalTeamList[k][0]['name'],
-//             totalTeamList[k][1]['name'],
-//           ];
-//         for (let i = 0; i < memberObject.length; i++) {
-//           for (let j = 0; j < tempPlayerList.length; j++) {
-//             if (memberObject[i]['name'] === tempPlayerList[j]) {
-//               memberObject[i]['oncourt'] = true;
-//             }
-//           }
-//         }
-//         setMemberStorage(memberObject);
-//         initCourtTile(firstTeamName, secondTeamName);
-//         return;
-//       }
-//     }
-
-//     // let firstTeamName =
-//     //     totalTeamList[0][0]['name'] + ' & ' + totalTeamList[0][1]['name'],
-//     //   secondTeamName =
-//     //     totalTeamList[1][0]['name'] + ' & ' + totalTeamList[1][1]['name'],
-//     //   tempPlayerList = [
-//     //     totalTeamList[0][0]['name'],
-//     //     totalTeamList[0][1]['name'],
-//     //     totalTeamList[1][0]['name'],
-//     //     totalTeamList[1][1]['name'],
-//     //   ];
-//   }
-// }
 
 function init() {
   initClubName();

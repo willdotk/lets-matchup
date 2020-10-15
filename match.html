@@ -2,7 +2,7 @@
 <html>
   <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <!-- <script
+    <script
       async
       src="https://www.googletagmanager.com/gtag/js?id=UA-175987075-1"
     ></script>
@@ -14,7 +14,7 @@
       gtag('js', new Date());
 
       gtag('config', 'UA-175987075-1');
-    </script> -->
+    </script>
 
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -177,6 +177,9 @@
               <p id="playerNumber" class="title">0</p>
               <p class="subtitle">Players</p>
             </article>
+
+          </div>
+          <div class="tile is-parent">
             <article class="tile is-child box">
               <p id="teamNumber" class="title">0</p>
               <p class="subtitle">Teams</p>
@@ -184,8 +187,8 @@
           </div>
           <div class="tile is-parent">
             <article class="tile is-child box">
-              <p class="title">Next Match</p>
-              <div id="teamList"></div>
+              <p id="teamList" class="title">0</p>
+              <p class="subtitle">Matches</p>
             </article>
           </div>
         </section>
@@ -233,7 +236,7 @@
               </button>
             </article>
             <div class="tile is-parent is-vertical">
-              <article class="tile is-child">
+              <article id="timer" class="tile is-child">
                 <p id="timecount" class="is-size-3"></p>
               </article>
             </div>
