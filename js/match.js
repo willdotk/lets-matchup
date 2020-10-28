@@ -401,7 +401,7 @@ function addCourt() {
         Math.abs(
           getTeamAverage(lst[i][0]) -
             getTeamAverage(lst[i][1])
-        ) < 0.5
+        ) <= 0.5
     ) {
       let firstTeamName =
           lst[i][0][0]['name'] +
