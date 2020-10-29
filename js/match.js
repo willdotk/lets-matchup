@@ -449,10 +449,10 @@ function extractCourt() {
     courtTileLast = courtField.lastChild,
     selectedTeams = getSelectedTeams(courtTileLast),
     tempPlayerList = [
-      selectedTeams[0],
-      selectedTeams[1],
-      selectedTeams[2],
-      selectedTeams[3],
+      selectedTeams[0].toLowerCase(),
+      selectedTeams[1].toLowerCase(),
+      selectedTeams[2].toLowerCase(),
+      selectedTeams[3].toLowerCase(),
     ];
 
   if (courtField.childElementCount > 1) {
@@ -465,7 +465,8 @@ function extractCourt() {
       }
     }
     setMemberStorage(memberObject);
-  } else {
+  } 
+  else {
     return;
   }
 }
@@ -615,10 +616,10 @@ function deleteCourt() {
   let firstCourt = courtTile.firstChild,
     selectedTeams = getSelectedTeams(firstCourt),
     tempPlayerList = [
-      selectedTeams[0],
-      selectedTeams[1],
-      selectedTeams[2],
-      selectedTeams[3],
+      selectedTeams[0].toLowerCase(),
+      selectedTeams[1].toLowerCase(),
+      selectedTeams[2].toLowerCase(),
+      selectedTeams[3].toLowerCase(),
     ];
 
   if (tempPlayerList) {
@@ -630,6 +631,7 @@ function deleteCourt() {
       }
     }
     for(let k = 0; k < totalMatchTeamList.length; k++){
+      console.log(tempPlayerList[1]);
       if(totalMatchTeamList[k][0][0]['name'] === tempPlayerList[0] &&
       totalMatchTeamList[k][0][1]['name'] === tempPlayerList[1] &&
       totalMatchTeamList[k][1][0]['name'] === tempPlayerList[2] &&
