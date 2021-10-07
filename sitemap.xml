@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"> 
   <url>
-    <loc>http://www.letsmatchup.club/</loc>
-    <lastmod>2020-09-27</lastmod>
+    <loc>https://www.willdotk.me/lets-matchup/</loc>
+    <lastmod>2021-10-07</lastmod>
   </url>
   <url>
-    <loc>http://www.letsmatchup.club/tournament.html</loc>
-    <lastmod>2020-09-27</lastmod>
+    <loc>https://www.willdotk.me/lets-matchup/play/tournament.html</loc>
+    <lastmod>2021-10-07</lastmod>
   </url>
   <url>
-    <loc>http://www.letsmatchup.club/match.html</loc>
-    <lastmod>2020-09-27</lastmod>
+    <loc>https://www.willdotk.me/lets-matchup/play/match.html</loc>
+    <lastmod>2021-10-07</lastmod>
   </url>
 </urlset>
