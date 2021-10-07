@@ -26,7 +26,7 @@ function memberToList(name) {
   let addListElement = document.createElement('li'),
     addCardElement = divElement(),
     deleteButtonImg = addIcon(
-      'img/user-minus-solid.svg',
+      '../img/user-minus-solid.svg',
       'width:3rem; cursor:pointer'
     ),
     switchBtn = switchButton(name),
