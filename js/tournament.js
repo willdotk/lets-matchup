@@ -861,6 +861,14 @@ function init() {
       { name: 'member10', level: '5', attend: true, oncourt: true },
       { name: 'member11', level: '6', attend: true, oncourt: true },
       { name: 'member12', level: '7', attend: true, oncourt: true },
+      { name: 'member13', level: '4', attend: true, oncourt: true },
+      { name: 'member14', level: '5', attend: true, oncourt: false },
+      { name: 'member15', level: '3', attend: true, oncourt: true },
+      { name: 'member16', level: '3', attend: true, oncourt: false },
+      { name: 'member17', level: '6', attend: true, oncourt: true },
+      { name: 'member18', level: '5', attend: true, oncourt: true },
+      { name: 'member19', level: '6', attend: true, oncourt: true },
+      { name: 'member20', level: '7', attend: true, oncourt: true },
     ];
     setMemberStorage(memberObject);
     initMemberList();
